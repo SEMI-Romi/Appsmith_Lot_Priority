@@ -1,0 +1,64 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "autoFocus": false,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 12,
+  "boxShadow": "none",
+  "defaultText": "{{MockApi.rule.RULE_ID}}",
+  "dynamicBindingPathList": [
+    {
+      "key": "defaultText"
+    },
+    {
+      "key": "isDisabled"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicTriggerPathList": [],
+  "iconAlign": "left",
+  "inputType": "TEXT",
+  "isDisabled": "{{MockApi.ruleMode === 'EDIT'}}",
+  "isLoading": false,
+  "isRequired": true,
+  "isVisible": true,
+  "key": "o3cdrl101f",
+  "label": "Rule ID",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelStyle": "",
+  "labelTextSize": "0.875rem",
+  "labelWidth": 5,
+  "leftColumn": 15,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 12,
+  "mobileLeftColumn": 15,
+  "mobileRightColumn": 40,
+  "mobileTopRow": 5,
+  "needsErrorInfo": false,
+  "originalBottomRow": 12,
+  "originalTopRow": 5,
+  "parentColumnSpace": 19.9375,
+  "parentId": "oz09wt528w",
+  "parentRowSpace": 10,
+  "placeholderText": "e.g. HOT_LOT_LOGIC",
+  "renderMode": "CANVAS",
+  "resetOnSubmit": false,
+  "responsiveBehavior": "fill",
+  "rightColumn": 40,
+  "shouldAllowAutofill": false,
+  "showStepArrows": false,
+  "topRow": 5,
+  "type": "INPUT_WIDGET_V2",
+  "version": 2,
+  "widgetId": "z5x7hcr32e",
+  "widgetName": "inp_ruleId"
+}

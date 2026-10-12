@@ -1,0 +1,50 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 54,
+  "boxShadow": "none",
+  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+  "buttonVariant": "PRIMARY",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "buttonColor"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "geoy1akocz",
+  "leftColumn": 52,
+  "minWidth": 120,
+  "mobileBottomRow": 54,
+  "mobileLeftColumn": 52,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 50,
+  "needsErrorInfo": false,
+  "onClick": "{{MockApi.confirmRule({ TECH: sel_ruleTech.selectedOptionValue, RULE_ID: inp_ruleId.text, SQL_COMMAND: inp_sqlCommand.text, EXTERNAL_PRIORITY: inp_extPriority.text, ACTIVE: sw_active.isSwitchedOn, RULE_PERIOD: inp_rulePeriod.text, RULE_PRIORITY: inp_rulePriority.text, RULE_EXPIRY_DATE: dp_ruleExpiry.formattedDate })}}",
+  "parentColumnSpace": 19.9375,
+  "parentId": "oz09wt528w",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "recaptchaType": "V3",
+  "renderMode": "CANVAS",
+  "resetFormOnClick": false,
+  "responsiveBehavior": "hug",
+  "rightColumn": 64,
+  "text": "Confirm",
+  "topRow": 50,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "v4qi7xpwqj",
+  "widgetName": "btn_ruleConfirm"
+}

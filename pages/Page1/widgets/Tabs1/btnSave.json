@@ -1,0 +1,53 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 8,
+  "boxShadow": "none",
+  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+  "buttonVariant": "PRIMARY",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "buttonColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "isDisabled"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": "{{!MockApi.pendingCount}}",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "akei3w5c6x",
+  "leftColumn": 54,
+  "minWidth": 120,
+  "mobileBottomRow": 8,
+  "mobileLeftColumn": 54,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 4,
+  "needsErrorInfo": false,
+  "onClick": "{{MockApi.saveTable()}}",
+  "parentColumnSpace": 19.9375,
+  "parentId": "mqzoeeffok",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "recaptchaType": "V3",
+  "renderMode": "CANVAS",
+  "resetFormOnClick": false,
+  "responsiveBehavior": "hug",
+  "rightColumn": 64,
+  "text": "Save changes",
+  "topRow": 4,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "bh6zfzmgfp",
+  "widgetName": "btnSave"
+}

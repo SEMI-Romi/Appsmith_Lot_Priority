@@ -1,0 +1,49 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "alignWidget": "LEFT",
+  "animateLoading": true,
+  "bottomRow": 47,
+  "boxShadow": "none",
+  "defaultSwitchState": "{{MockApi.rule.ACTIVE}}",
+  "dynamicBindingPathList": [
+    {
+      "key": "defaultSwitchState"
+    },
+    {
+      "key": "accentColor"
+    }
+  ],
+  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicPropertyPathList": [
+    {
+      "key": "defaultSwitchState"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "ij91251bhu",
+  "label": "Active",
+  "labelPosition": "Left",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 47,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 15,
+  "mobileTopRow": 43,
+  "needsErrorInfo": false,
+  "parentColumnSpace": 19.9375,
+  "parentId": "oz09wt528w",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 15,
+  "topRow": 43,
+  "type": "SWITCH_WIDGET",
+  "version": 1,
+  "widgetId": "o2kjbu2gpp",
+  "widgetName": "sw_active"
+}

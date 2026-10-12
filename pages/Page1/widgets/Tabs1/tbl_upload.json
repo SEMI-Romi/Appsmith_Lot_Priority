@@ -1,0 +1,461 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "allowAddNewRow": "{{!MockApi.uploadStatus.BATCH_ID}}",
+  "animateLoading": true,
+  "borderColor": "#E0DEDE",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 84,
+  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+  "cachedTableData": {},
+  "canFreezeColumn": true,
+  "childStylesheet": {
+    "button": {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "boxShadow": "none",
+      "buttonColor": "{{appsmith.theme.colors.primaryColor}}"
+    },
+    "editActions": {
+      "discardBorderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "discardButtonColor": "{{appsmith.theme.colors.primaryColor}}",
+      "saveBorderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "saveButtonColor": "{{appsmith.theme.colors.primaryColor}}"
+    },
+    "iconButton": {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "boxShadow": "none",
+      "buttonColor": "{{appsmith.theme.colors.primaryColor}}"
+    },
+    "menuButton": {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "boxShadow": "none",
+      "menuColor": "{{appsmith.theme.colors.primaryColor}}"
+    }
+  },
+  "columnOrder": [
+    "ROW_NO",
+    "TECH",
+    "LOT_ID",
+    "EXTERNAL_PRIORITY",
+    "STATUS",
+    "Remove",
+    "EditActions1"
+  ],
+  "columnUpdatedAt": 1791774681862,
+  "columnWidthMap": {
+    "EXTERNAL_PRIORITY": 150,
+    "EditActions1": 150,
+    "LOT_ID": 180,
+    "ROW_NO": 150,
+    "Remove": 90,
+    "STATUS": 320,
+    "TECH": 140
+  },
+  "customIsLoading": false,
+  "customIsLoadingValue": "",
+  "defaultNewRow": "{{ { TECH: 'LOGIC' } }}",
+  "defaultPageSize": 0,
+  "defaultSelectedRowIndex": -1,
+  "defaultSelectedRowIndices": [],
+  "delimiter": ",",
+  "dynamicBindingPathList": [
+    {
+      "key": "tableData"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
+    },
+    {
+      "key": "allowAddNewRow"
+    },
+    {
+      "key": "defaultNewRow"
+    },
+    {
+      "key": "primaryColumns.ROW_NO.computedValue"
+    },
+    {
+      "key": "primaryColumns.TECH.isCellEditable"
+    },
+    {
+      "key": "primaryColumns.TECH.computedValue"
+    },
+    {
+      "key": "primaryColumns.TECH.selectOptions"
+    },
+    {
+      "key": "primaryColumns.LOT_ID.isCellEditable"
+    },
+    {
+      "key": "primaryColumns.LOT_ID.computedValue"
+    },
+    {
+      "key": "primaryColumns.EXTERNAL_PRIORITY.isCellEditable"
+    },
+    {
+      "key": "primaryColumns.EXTERNAL_PRIORITY.computedValue"
+    },
+    {
+      "key": "primaryColumns.STATUS.textColor"
+    },
+    {
+      "key": "primaryColumns.STATUS.computedValue"
+    },
+    {
+      "key": "primaryColumns.Remove.isCellVisible"
+    },
+    {
+      "key": "primaryColumns.Remove.buttonLabel"
+    },
+    {
+      "key": "primaryColumns.Remove.buttonColor"
+    },
+    {
+      "key": "primaryColumns.Remove.borderRadius"
+    },
+    {
+      "key": "primaryColumns.Remove.boxShadow"
+    },
+    {
+      "key": "primaryColumns.EditActions1.saveButtonColor"
+    },
+    {
+      "key": "primaryColumns.EditActions1.saveBorderRadius"
+    },
+    {
+      "key": "primaryColumns.EditActions1.discardButtonColor"
+    },
+    {
+      "key": "primaryColumns.EditActions1.discardBorderRadius"
+    },
+    {
+      "key": "primaryColumns.EditActions1.isSaveDisabled"
+    },
+    {
+      "key": "primaryColumns.EditActions1.isDiscardDisabled"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "allowAddNewRow"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onAddNewRowSave"
+    },
+    {
+      "key": "primaryColumns.Remove.onClick"
+    },
+    {
+      "key": "primaryColumns.EditActions1.onSave"
+    }
+  ],
+  "enableClientSideSearch": true,
+  "endOfData": false,
+  "flexVerticalAlignment": "start",
+  "horizontalAlignment": "LEFT",
+  "inlineEditingSaveOption": "ROW_LEVEL",
+  "isLoading": false,
+  "isSortable": true,
+  "isVisible": true,
+  "isVisibleDownload": true,
+  "isVisibleFilters": true,
+  "isVisiblePagination": true,
+  "isVisibleSearch": true,
+  "key": "xbnrnugp6n",
+  "label": "Data",
+  "leftColumn": 0,
+  "minWidth": 450,
+  "mobileBottomRow": 84,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 15,
+  "needsErrorInfo": false,
+  "onAddNewRowSave": "{{MockApi.addUploadRow(tbl_upload.newRow)}}",
+  "originalBottomRow": 84,
+  "originalTopRow": 15,
+  "parentColumnSpace": 19.9375,
+  "parentId": "5x9bg43q7v",
+  "parentRowSpace": 10,
+  "primaryColumnId": "ROW_NO",
+  "primaryColumns": {
+    "EXTERNAL_PRIORITY": {
+      "alias": "EXTERNAL_PRIORITY",
+      "allowCellWrapping": false,
+      "allowHeaderWrapping": false,
+      "allowSameOptionsInNewRow": true,
+      "columnType": "number",
+      "computedValue": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"EXTERNAL_PRIORITY\"])) : currentRow[\"EXTERNAL_PRIORITY\"] })()}}",
+      "currencyCode": "USD",
+      "decimals": 0,
+      "enableFilter": true,
+      "enableSort": true,
+      "fontStyle": "",
+      "horizontalAlignment": "LEFT",
+      "id": "EXTERNAL_PRIORITY",
+      "index": 3,
+      "isCellEditable": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (!MockApi.uploadStatus.BATCH_ID)) : !MockApi.uploadStatus.BATCH_ID })()}}",
+      "isCellVisible": true,
+      "isDerived": false,
+      "isDisabled": false,
+      "isDiscardVisible": true,
+      "isEditable": true,
+      "isSaveVisible": true,
+      "isVisible": true,
+      "label": "External priority",
+      "notation": "standard",
+      "originalId": "EXTERNAL_PRIORITY",
+      "sticky": "",
+      "textColor": "#231F20",
+      "textSize": "0.875rem",
+      "thousandSeparator": false,
+      "validation": {},
+      "verticalAlignment": "CENTER",
+      "width": 150
+    },
+    "EditActions1": {
+      "alias": "EditActions1",
+      "allowCellWrapping": false,
+      "allowHeaderWrapping": false,
+      "allowSameOptionsInNewRow": true,
+      "buttonStyle": "rgb(3, 179, 101)",
+      "columnType": "editActions",
+      "computedValue": "",
+      "currencyCode": "USD",
+      "decimals": 0,
+      "discardActionLabel": "Discard",
+      "discardBorderRadius": "{{tbl_upload.processedTableData.map((currentRow, currentIndex) => ( appsmith.theme.borderRadius.appBorderRadius))}}",
+      "discardButtonColor": "{{tbl_upload.processedTableData.map((currentRow, currentIndex) => ( appsmith.theme.colors.primaryColor))}}",
+      "discardButtonVariant": "TERTIARY",
+      "discardIconAlign": "left",
+      "enableFilter": false,
+      "enableSort": false,
+      "fontStyle": "",
+      "horizontalAlignment": "LEFT",
+      "id": "EditActions1",
+      "index": 6,
+      "isCellEditable": false,
+      "isCellVisible": true,
+      "isDerived": true,
+      "isDisabled": false,
+      "isDiscardDisabled": "{{tbl_upload.processedTableData.map((currentRow, currentIndex) => ( !tbl_upload.updatedRowIndices.includes(currentIndex)))}}",
+      "isDiscardVisible": true,
+      "isEditable": false,
+      "isSaveDisabled": "{{tbl_upload.processedTableData.map((currentRow, currentIndex) => ( !tbl_upload.updatedRowIndices.includes(currentIndex)))}}",
+      "isSaveVisible": true,
+      "isVisible": true,
+      "label": "Save / Discard",
+      "notation": "standard",
+      "onSave": "{{MockApi.saveUploadRow(tbl_upload.updatedRow)}}",
+      "originalId": "EditActions1",
+      "saveActionLabel": "Save",
+      "saveBorderRadius": "{{tbl_upload.processedTableData.map((currentRow, currentIndex) => ( appsmith.theme.borderRadius.appBorderRadius))}}",
+      "saveButtonColor": "{{tbl_upload.processedTableData.map((currentRow, currentIndex) => ( appsmith.theme.colors.primaryColor))}}",
+      "saveIconAlign": "left",
+      "sticky": "right",
+      "textColor": "#231F20",
+      "textSize": "0.875rem",
+      "thousandSeparator": true,
+      "validation": {},
+      "verticalAlignment": "CENTER",
+      "width": 150
+    },
+    "LOT_ID": {
+      "alias": "LOT_ID",
+      "allowCellWrapping": false,
+      "allowHeaderWrapping": false,
+      "allowSameOptionsInNewRow": true,
+      "columnType": "text",
+      "computedValue": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"LOT_ID\"])) : currentRow[\"LOT_ID\"] })()}}",
+      "currencyCode": "USD",
+      "decimals": 0,
+      "enableFilter": true,
+      "enableSort": true,
+      "fontStyle": "",
+      "horizontalAlignment": "LEFT",
+      "id": "LOT_ID",
+      "index": 2,
+      "isCellEditable": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (!MockApi.uploadStatus.BATCH_ID)) : !MockApi.uploadStatus.BATCH_ID })()}}",
+      "isCellVisible": true,
+      "isDerived": false,
+      "isDisabled": false,
+      "isDiscardVisible": true,
+      "isEditable": true,
+      "isSaveVisible": true,
+      "isVisible": true,
+      "label": "Lot ID",
+      "notation": "standard",
+      "originalId": "LOT_ID",
+      "sticky": "",
+      "textColor": "#231F20",
+      "textSize": "0.875rem",
+      "thousandSeparator": true,
+      "validation": {},
+      "verticalAlignment": "CENTER",
+      "width": 180
+    },
+    "ROW_NO": {
+      "alias": "ROW_NO",
+      "allowCellWrapping": false,
+      "allowHeaderWrapping": false,
+      "allowSameOptionsInNewRow": true,
+      "columnType": "number",
+      "computedValue": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"ROW_NO\"])) : currentRow[\"ROW_NO\"] })()}}",
+      "currencyCode": "USD",
+      "decimals": 0,
+      "enableFilter": true,
+      "enableSort": true,
+      "fontStyle": "",
+      "horizontalAlignment": "LEFT",
+      "id": "ROW_NO",
+      "index": 0,
+      "isCellEditable": false,
+      "isCellVisible": true,
+      "isDerived": false,
+      "isDisabled": false,
+      "isDiscardVisible": true,
+      "isEditable": false,
+      "isSaveVisible": true,
+      "isVisible": false,
+      "label": "ROW_NO",
+      "notation": "standard",
+      "originalId": "ROW_NO",
+      "sticky": "",
+      "textColor": "#231F20",
+      "textSize": "0.875rem",
+      "thousandSeparator": false,
+      "validation": {},
+      "verticalAlignment": "CENTER",
+      "width": 150
+    },
+    "Remove": {
+      "alias": "Remove",
+      "allowCellWrapping": false,
+      "allowHeaderWrapping": false,
+      "allowSameOptionsInNewRow": true,
+      "borderRadius": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (appsmith.theme.borderRadius.appBorderRadius)) : appsmith.theme.borderRadius.appBorderRadius })()}}",
+      "boxShadow": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => ('none')) : 'none' })()}}",
+      "buttonColor": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (\"#B91C1C\")) : \"#B91C1C\" })()}}",
+      "buttonLabel": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (\"Remove\")) : \"Remove\" })()}}",
+      "buttonVariant": "SECONDARY",
+      "columnType": "button",
+      "computedValue": "",
+      "currencyCode": "USD",
+      "decimals": 0,
+      "enableFilter": false,
+      "enableSort": false,
+      "fontStyle": "",
+      "horizontalAlignment": "LEFT",
+      "id": "Remove",
+      "index": 5,
+      "isCellEditable": false,
+      "isCellVisible": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (!MockApi.uploadStatus.BATCH_ID)) : !MockApi.uploadStatus.BATCH_ID })()}}",
+      "isDerived": true,
+      "isDisabled": false,
+      "isDiscardVisible": true,
+      "isEditable": false,
+      "isSaveVisible": true,
+      "isVisible": true,
+      "label": "",
+      "notation": "standard",
+      "onClick": "{{MockApi.removeUploadRow(currentRow)}}",
+      "originalId": "Remove",
+      "sticky": "",
+      "textColor": "#231F20",
+      "textSize": "0.875rem",
+      "thousandSeparator": true,
+      "validation": {},
+      "verticalAlignment": "CENTER",
+      "width": 90
+    },
+    "STATUS": {
+      "alias": "STATUS",
+      "allowCellWrapping": false,
+      "allowHeaderWrapping": false,
+      "allowSameOptionsInNewRow": true,
+      "columnType": "text",
+      "computedValue": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"STATUS\"])) : currentRow[\"STATUS\"] })()}}",
+      "currencyCode": "USD",
+      "decimals": 0,
+      "enableFilter": true,
+      "enableSort": true,
+      "fontStyle": "",
+      "horizontalAlignment": "LEFT",
+      "id": "STATUS",
+      "index": 4,
+      "isCellEditable": false,
+      "isCellVisible": true,
+      "isDerived": false,
+      "isDisabled": false,
+      "isDiscardVisible": true,
+      "isEditable": false,
+      "isSaveVisible": true,
+      "isVisible": true,
+      "label": "Status",
+      "notation": "standard",
+      "originalId": "STATUS",
+      "sticky": "",
+      "textColor": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"STATUS\"] === \"OK\" ? \"#15803D\" : currentRow[\"STATUS\"] === \"PENDING\" ? \"#6B7280\" : \"#B91C1C\")) : currentRow[\"STATUS\"] === \"OK\" ? \"#15803D\" : currentRow[\"STATUS\"] === \"PENDING\" ? \"#6B7280\" : \"#B91C1C\" })()}}",
+      "textSize": "0.875rem",
+      "thousandSeparator": true,
+      "validation": {},
+      "verticalAlignment": "CENTER",
+      "width": 320
+    },
+    "TECH": {
+      "alias": "TECH",
+      "allowCellWrapping": false,
+      "allowHeaderWrapping": false,
+      "allowSameOptionsInNewRow": true,
+      "columnType": "select",
+      "computedValue": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"TECH\"])) : currentRow[\"TECH\"] })()}}",
+      "currencyCode": "USD",
+      "decimals": 0,
+      "enableFilter": true,
+      "enableSort": true,
+      "fontStyle": "",
+      "horizontalAlignment": "LEFT",
+      "id": "TECH",
+      "index": 1,
+      "isCellEditable": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (!MockApi.uploadStatus.BATCH_ID)) : !MockApi.uploadStatus.BATCH_ID })()}}",
+      "isCellVisible": true,
+      "isDerived": false,
+      "isDisabled": false,
+      "isDiscardVisible": true,
+      "isEditable": true,
+      "isSaveVisible": true,
+      "isVisible": true,
+      "label": "Tech",
+      "notation": "standard",
+      "originalId": "TECH",
+      "selectOptions": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (MockApi.lookupsData.TECH)) : MockApi.lookupsData.TECH })()}}",
+      "sticky": "",
+      "textColor": "#231F20",
+      "textSize": "0.875rem",
+      "thousandSeparator": true,
+      "validation": {},
+      "verticalAlignment": "CENTER",
+      "width": 140
+    }
+  },
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "searchKey": "",
+  "tableData": "{{MockApi.uploadRows}}",
+  "textSize": "0.875rem",
+  "topRow": 15,
+  "totalRecordsCount": 0,
+  "type": "TABLE_WIDGET_V2",
+  "version": 2,
+  "verticalAlignment": "CENTER",
+  "widgetId": "za0xpz8eue",
+  "widgetName": "tbl_upload"
+}

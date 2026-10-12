@@ -1,0 +1,50 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 54,
+  "boxShadow": "none",
+  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+  "buttonVariant": "TERTIARY",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "buttonColor"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "c6l9rodv6i",
+  "leftColumn": 40,
+  "minWidth": 120,
+  "mobileBottomRow": 54,
+  "mobileLeftColumn": 40,
+  "mobileRightColumn": 51,
+  "mobileTopRow": 50,
+  "needsErrorInfo": false,
+  "onClick": "{{MockApi.rule.VERSION ? MockApi.pickRule(MockApi.rule) : MockApi.newRule()}}",
+  "parentColumnSpace": 19.9375,
+  "parentId": "oz09wt528w",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "recaptchaType": "V3",
+  "renderMode": "CANVAS",
+  "resetFormOnClick": false,
+  "responsiveBehavior": "hug",
+  "rightColumn": 51,
+  "text": "Cancel",
+  "topRow": 50,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "fe8svnv328",
+  "widgetName": "btn_ruleCancel"
+}
