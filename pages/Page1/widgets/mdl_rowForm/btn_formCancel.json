@@ -1,0 +1,50 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 45,
+  "boxShadow": "none",
+  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+  "buttonVariant": "SECONDARY",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "buttonColor"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "1ux8k4qaji",
+  "leftColumn": 31,
+  "minWidth": 120,
+  "mobileBottomRow": 45,
+  "mobileLeftColumn": 31,
+  "mobileRightColumn": 46,
+  "mobileTopRow": 41,
+  "needsErrorInfo": false,
+  "onClick": "{{closeModal('mdl_rowForm')}}",
+  "parentColumnSpace": 8.75,
+  "parentId": "33ll492zsu",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "recaptchaType": "V3",
+  "renderMode": "CANVAS",
+  "resetFormOnClick": false,
+  "responsiveBehavior": "hug",
+  "rightColumn": 46,
+  "text": "Cancel",
+  "topRow": 41,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "xzb6if0t11",
+  "widgetName": "btn_formCancel"
+}

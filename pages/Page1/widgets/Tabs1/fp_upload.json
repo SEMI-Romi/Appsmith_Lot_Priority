@@ -1,0 +1,60 @@
+{
+  "allowedFileTypes": [
+    ".csv",
+    ".xlsx",
+    ".xls"
+  ],
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 9,
+  "boxShadow": "none",
+  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+  "dynamicBindingPathList": [
+    {
+      "key": "isDisabled"
+    },
+    {
+      "key": "buttonColor"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onFilesSelected"
+    }
+  ],
+  "dynamicTyping": false,
+  "fileDataType": "Array",
+  "files": [],
+  "isDefaultClickDisabled": true,
+  "isDisabled": "{{!!MockApi.uploadStatus.BATCH_ID && MockApi.uploadStatus.STATUS !== 'DONE'}}",
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": true,
+  "key": "a3w3bvgkuv",
+  "label": "Load file",
+  "leftColumn": 0,
+  "maxFileSize": 5,
+  "maxNumFiles": 1,
+  "minWidth": 120,
+  "mobileBottomRow": 9,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 14,
+  "mobileTopRow": 5,
+  "needsErrorInfo": false,
+  "onFilesSelected": "{{MockApi.loadFile(fp_upload.files[0])}}",
+  "parentColumnSpace": 19.9375,
+  "parentId": "5x9bg43q7v",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "hug",
+  "rightColumn": 14,
+  "selectedFiles": [],
+  "topRow": 5,
+  "type": "FILE_PICKER_WIDGET_V2",
+  "version": 1,
+  "widgetId": "nqitty7wpd",
+  "widgetName": "fp_upload"
+}

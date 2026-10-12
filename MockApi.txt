@@ -1,0 +1,1073 @@
+export default {
+  // ===== settings you can change while testing =====
+  MOCK_ROLE: "ADMIN",          // VIEWER | PLANNER | CIM | ADMIN
+  MOCK_DELAY_MS: 300,          // simulated network delay
+  MOCK_ROW_MS: 1000,           // simulated engine time per uploaded lot
+  PRIORITY_MIN: 0,
+  PRIORITY_MAX: 99,
+  OPERATION_PATTERN: "^\\d{4}\\.\\d{3}$",   // TODO(confirm): operation number format, e.g. 0075.001
+  TECH_DEFAULTS: ["LOGIC"],
+  RULE_FORMULAS: ["Cycle Time", "Ratio Time"],
+  TEST_RULE_ROW_LIMIT: 100,
+
+  // Columns of the AUTO PRIORITY table, in display order.
+  // editable: false = filled by the server; hide those columns in tbl_params.
+  TABLES: {
+    "AUTO PRIORITY": {
+      keyField: "PARAM_ID",
+      columns: [
+        { name: "PARAM_ID", type: "integer", editable: false },
+        { name: "TECH", type: "text", editable: true, default: "LOGIC" },
+        { name: "OPERATION_START", type: "text", editable: true },
+        { name: "OPERATION_END", type: "text", editable: true },
+        { name: "RULE_FORMULA", type: "text", editable: true, default: "Cycle Time" },
+        { name: "RANGE_FROM", type: "number", editable: true },
+        { name: "RANGE_TO", type: "number", editable: true },
+        { name: "PRIORITY_NUMBER", type: "integer", editable: true },
+        { name: "UPDATED_BY", type: "text", editable: false },
+        { name: "UPDATED_TIME", type: "text", editable: false },
+        { name: "VERSION", type: "integer", editable: false },
+      ],
+    },
+  },
+
+  // ===== values widgets bind to =====
+  // UI 1
+  paramTables: [],
+  currentTable: "",
+  tableColumns: [],
+  serverRows: [],
+  paramRows: [],
+  pending: { added: [], updated: {}, deleted: {} },
+  pendingCount: 0,
+  newRowSeq: 0,
+  formMode: "",
+  formTitle: "",
+  formKey: null,
+  formData: {},
+  lookupsData: { TECH: [], RULE_FORMULA: [] },
+  // UI 2
+  rules: [],
+  rule: {},
+  ruleMode: "NEW",
+  testResult: { COLUMNS: [], ROWS: [], ROW_COUNT: 0, TRUNCATED: false },
+  // UI 3
+  pendingUpload: [],
+  uploadSeq: 0,
+  uploadRows: [],
+  uploadCheck: { VALID: false, OK_COUNT: 0, ERROR_COUNT: 0, ROWS: [] },
+  uploadStatus: { BATCH_ID: null, STATUS: "", PERCENT: 0, OK_COUNT: 0, FAILED_COUNT: 0, ROWS: [] },
+  // shared
+  lastError: null,
+  db: null,
+
+  // =================================================================
+  // Page load
+  // =================================================================
+  async init() {
+    await this.getParamTables();
+    await this.lookups();
+    await this.listRules("");
+    await this.newRule();
+    if (this.paramTables.length) await this.selectTable(this.paramTables[0].value);
+    return "ready";
+  },
+
+  async resetMock() {
+    this.db = this._seed();
+    this.lastError = null;
+    this._clearPending();
+    this._clearUpload();
+    return this.init();
+  },
+
+  // GET /health
+  async health() {
+    await this._delay();
+    return { STATUS: "ok", DB: "mock", SIVIEW_DB: "stub" };
+  },
+
+  // GET /lookups
+  async lookups() {
+    await this._delay();
+    const db = this._ensure();
+    this._requireRole("VIEWER");
+    const techs = [...new Set([
+      ...this.TECH_DEFAULTS,
+      ...db.tables["AUTO PRIORITY"].rows.map(r => r.TECH),
+      ...db.rules.map(r => r.TECH),
+    ])].filter(Boolean).sort();
+    this.lookupsData = {
+      TECH: techs.map(v => ({ label: v, value: v })),
+      RULE_FORMULA: this.RULE_FORMULAS.map(v => ({ label: v, value: v })),
+    };
+    return this._clone(this.lookupsData);
+  },
+
+  // =================================================================
+  // UI 1 - Maintain Table: button actions (never throw; show alerts)
+  // =================================================================
+  async selectTable(name) {
+    if (this.pendingCount > 0) {
+      showAlert(this.pendingCount + " unsaved change(s) on " + this.currentTable + " were discarded", "warning");
+    }
+    this._clearPending();
+    this.currentTable = name || "";
+    const meta = this.TABLES[this.currentTable];
+    this.tableColumns = meta ? this._clone(meta.columns) : [];
+    if (!meta) {
+      this.serverRows = [];
+      this._refreshView();
+      return [];
+    }
+    try {
+      await this.getParamRows(this.currentTable);
+    } catch (e) {
+      showAlert(e.message, "error");
+    }
+    return this._clone(this.paramRows);
+  },
+
+  // btnAdd: blank form, or a copy of the selected row if one is selected
+  async openAdd(selectedRow) {
+    if (!this.currentTable) { showAlert("Select a table first", "warning"); return; }
+    if (!this._hasRole("PLANNER")) { showAlert("Your role cannot change tables", "error"); return; }
+    await this._resetForm("mdl_rowForm");
+    const key = this._keyField();
+    const hasRow = selectedRow && selectedRow[key] !== undefined && selectedRow[key] !== "" && selectedRow[key] !== null;
+    this.formMode = "ADD";
+    this.formKey = null;
+    this.formTitle = hasRow ? "Add row (copied from selected row)" : "Add row";
+    this.formData = this._editableTemplate(hasRow ? selectedRow : {});
+    showModal("mdl_rowForm");
+  },
+
+  // btnUpdate: form filled with the selected row
+  async openUpdate(selectedRow) {
+    const key = this._keyField();
+    if (!selectedRow || selectedRow[key] === undefined || selectedRow[key] === "" || selectedRow[key] === null) {
+      showAlert("Select a row to update first", "warning");
+      return;
+    }
+    if (!this._hasRole("PLANNER")) { showAlert("Your role cannot change tables", "error"); return; }
+    if (selectedRow.CHANGE === "DELETE") {
+      showAlert("This row is marked for delete. Use Discard to undo.", "warning");
+      return;
+    }
+    await this._resetForm("mdl_rowForm");
+    this.formMode = "UPDATE";
+    this.formKey = selectedRow[key];
+    this.formTitle = "Update row " + selectedRow[key];
+    this.formData = this._editableTemplate(selectedRow);
+    showModal("mdl_rowForm");
+  },
+
+  // JSON Form submit: checks the row, then stages it (saved only on Save Table)
+  submitForm(data) {
+    // Ignore a second submit (double-click, or two buttons bound to this) until Add/Update is opened again
+    if (!this.formMode) return false;
+    const row = this._normRow(data);
+    const errs = this._checkRow(row);
+    if (errs.length) {
+      showAlert(errs.map(e => e.MESSAGE).join("\n"), "error");
+      return false;
+    }
+    const key = this._keyField();
+    // Block duplicates: same TECH, formula, operation range and value range as another row in the grid
+    const dup = this.paramRows.find(r => r.CHANGE !== "DELETE" && r[key] !== this.formKey && this._sameScope(row, r));
+    if (dup) {
+      showAlert("Duplicate of row " + dup[key] + ": same TECH, RULE_FORMULA, operation range and value range"
+        + " (priority " + dup.PRIORITY_NUMBER + "). Change one of them, or update row " + dup[key] + " instead.", "error");
+      return false;
+    }
+    const p = this._clone(this.pending);
+    if (this.formMode === "ADD") {
+      this.newRowSeq += 1;
+      p.added.push({ [key]: "NEW-" + this.newRowSeq, ...row });
+    } else {
+      const i = p.added.findIndex(r => r[key] === this.formKey);
+      if (i >= 0) p.added[i] = { ...p.added[i], ...row };
+      else p.updated[this.formKey] = row;
+    }
+    this.pending = p;
+    this.formMode = "";
+    this.formKey = null;
+    this._refreshView();
+    closeModal("mdl_rowForm");
+    return true;
+  },
+
+  // Confirm button in mdl_confirmDelete
+  markDelete(selectedRow) {
+    const key = this._keyField();
+    closeModal("mdl_confirmDelete");
+    if (!selectedRow || selectedRow[key] === undefined || selectedRow[key] === "" || selectedRow[key] === null) {
+      showAlert("Select a row to delete first", "warning");
+      return;
+    }
+    if (!this._hasRole("PLANNER")) { showAlert("Your role cannot change tables", "error"); return; }
+    const p = this._clone(this.pending);
+    const k = selectedRow[key];
+    const i = p.added.findIndex(r => r[key] === k);
+    if (i >= 0) {
+      p.added.splice(i, 1);
+    } else {
+      delete p.updated[k];
+      p.deleted[k] = true;
+    }
+    this.pending = p;
+    this._refreshView();
+  },
+
+  // btnSave: sends all staged changes in one call (all-or-nothing)
+  async saveTable() {
+    if (!this.pendingCount) { showAlert("No changes to save", "info"); return null; }
+    const key = this._keyField();
+    const p = this.pending;
+    const byKey = {};
+    this.serverRows.forEach(r => { byKey[String(r[key])] = r; });
+    const body = {
+      table: this.currentTable,
+      added: p.added.map(r => { const c = { ...r }; delete c[key]; return c; }),
+      updated: Object.keys(p.updated).map(k => ({ ...p.updated[k], [key]: byKey[k][key], VERSION: byKey[k].VERSION })),
+      deleted: Object.keys(p.deleted).map(k => ({ [key]: byKey[k][key], VERSION: byKey[k].VERSION })),
+    };
+    try {
+      const res = await this.saveParamRows(body);
+      this._clearPending();
+      await this.getParamRows(this.currentTable);
+      await this.lookups();
+      showAlert("Saved: " + res.ADDED + " added, " + res.UPDATED + " updated, " + res.DELETED + " deleted", "success");
+      return res;
+    } catch (e) {
+      // The API calls new rows "new row 1, 2..."; show the NEW-n ids the grid uses instead
+      if (this.lastError) {
+        const rename = t => String(t || "").replace(/new row (\d+)/g, (m, n) => {
+          const r = p.added[Number(n) - 1];
+          return r ? "row " + r[key] : m;
+        });
+        this.lastError.MESSAGE = rename(this.lastError.MESSAGE);
+        this.lastError.DETAILS = (this.lastError.DETAILS || []).map(d => ({ ...d, ROW_REF: rename(d.ROW_REF), MESSAGE: rename(d.MESSAGE) }));
+      }
+      showAlert(this.errorText() || e.message, "error");
+      return null;
+    }
+  },
+
+  discardChanges() {
+    this._clearPending();
+    this._refreshView();
+    showAlert("Unsaved changes discarded", "info");
+  },
+
+  // =================================================================
+  // UI 1 - mock API endpoints
+  // =================================================================
+
+  // GET /param-tables
+  async getParamTables() {
+    await this._delay();
+    this._ensure();
+    this._requireRole("VIEWER");
+    this.paramTables = Object.keys(this.TABLES).map(v => ({ label: v, value: v }));
+    return this._clone(this.paramTables);
+  },
+
+  // GET /param-rows?table=
+  async getParamRows(table) {
+    await this._delay();
+    const db = this._ensure();
+    this._requireRole("VIEWER");
+    const store = db.tables[table];
+    if (!store) throw this._err(404, "NOT_FOUND", "Table " + table + " not found");
+    const rows = this._clone(store.rows).sort((a, b) =>
+      a.TECH.localeCompare(b.TECH) || a.RULE_FORMULA.localeCompare(b.RULE_FORMULA)
+      || a.OPERATION_START.localeCompare(b.OPERATION_START) || a.RANGE_FROM - b.RANGE_FROM);
+    this.serverRows = rows;
+    this._refreshView();
+    return this._clone(rows);
+  },
+
+  // POST /param-rows/bulk   body { table, added: [...], updated: [...], deleted: [{PARAM_ID, VERSION}] }
+  async saveParamRows(body = {}) {
+    await this._delay();
+    const db = this._ensure();
+    this._requireRole("PLANNER");
+    const table = body.table;
+    const store = db.tables[table];
+    if (!this.TABLES[table] || !store) throw this._err(404, "NOT_FOUND", "Table " + table + " not found");
+    const key = "PARAM_ID";
+    const updated = (body.updated || []).map(r => ({ ...this._normRow(r), [key]: Number(r[key]), VERSION: Number(r.VERSION) }));
+    const added = (body.added || []).filter(r => r && Object.keys(r).length).map(r => this._normRow(r));
+    const deleted = (body.deleted || []).map(r => ({ [key]: Number(r[key]), VERSION: Number(r.VERSION) }));
+
+    const details = [];
+    updated.forEach(r => this._checkRow(r).forEach(e => details.push({ ROW_REF: "PARAM_ID " + r[key], ...e })));
+    added.forEach((r, i) => this._checkRow(r).forEach(e => details.push({ ROW_REF: "new row " + (i + 1), ...e })));
+    if (details.length) {
+      throw this._err(422, "VALIDATION_FAILED", details.length + " problem(s) found; nothing was saved", details);
+    }
+
+    for (const r of [...updated, ...deleted]) {
+      const cur = store.rows.find(x => x[key] === r[key]);
+      if (!cur) throw this._err(404, "NOT_FOUND", "PARAM_ID " + r[key] + " not found");
+      if (cur.VERSION !== r.VERSION) {
+        throw this._err(409, "VERSION_CONFLICT", "Someone else changed this record. Reload and try again.",
+          [{ ROW_REF: "PARAM_ID " + r[key], MESSAGE: "Changed by someone else since you loaded it" }]);
+      }
+    }
+
+    // Duplicate check on the resulting table (overlaps are allowed, exact duplicates are not)
+    const gone = new Set([...updated, ...deleted].map(r => r[key]));
+    const kept = store.rows.filter(x => !gone.has(x[key])).map(x => ({ ref: "PARAM_ID " + x[key], r: x }));
+    const changed = [...updated.map(r => ({ ref: "PARAM_ID " + r[key], r })),
+                     ...added.map((r, i) => ({ ref: "new row " + (i + 1), r }))];
+    changed.forEach((x, i) => {
+      kept.forEach(y => {
+        if (this._sameScope(x.r, y.r)) details.push({ ROW_REF: x.ref, FIELD: "",
+          MESSAGE: "Duplicate of " + y.ref + " (same TECH, RULE_FORMULA, operation range and value range)" });
+      });
+      changed.forEach((y, j) => {
+        if (j > i && this._sameScope(x.r, y.r)) details.push({ ROW_REF: x.ref, FIELD: "",
+          MESSAGE: "Duplicate of " + y.ref + " (same TECH, RULE_FORMULA, operation range and value range)" });
+      });
+    });
+    if (details.length) {
+      throw this._err(422, "VALIDATION_FAILED", details.length + " problem(s) found; nothing was saved", details);
+    }
+
+    const now = this._now();
+    const user = this._user();
+    const saved = [];
+    deleted.forEach(r => {
+      const i = store.rows.findIndex(x => x[key] === r[key]);
+      const before = store.rows.splice(i, 1)[0];
+    });
+    updated.forEach(r => {
+      const i = store.rows.findIndex(x => x[key] === r[key]);
+      const before = this._clone(store.rows[i]);
+      const after = this._orderRow({ ...before, ...this._pickEditable(r), UPDATED_TIME: now, UPDATED_BY: user, VERSION: before.VERSION + 1 });
+      store.rows[i] = after;
+      saved.push(after);
+    });
+    added.forEach(r => {
+      const row = this._orderRow({ ...this._pickEditable(r), PARAM_ID: store.nextId++, UPDATED_TIME: now, UPDATED_BY: user, VERSION: 1 });
+      store.rows.push(row);
+      saved.push(row);
+    });
+    this.db = db;
+    this.lastError = null;
+    return this._clone({ ADDED: added.length, UPDATED: updated.length, DELETED: deleted.length, ROWS: saved });
+  },
+
+  // =================================================================
+  // UI 2 - Rule Config: button actions (never throw; show alerts)
+  // =================================================================
+
+  // "New rule" button: clears the form
+  async newRule() {
+    await this._resetForm("ctn_ruleForm");
+    this.ruleMode = "NEW";
+    this.rule = { TECH: this.TECH_DEFAULTS[0] || "", RULE_ID: "", SQL_COMMAND: "", EXTERNAL_PRIORITY: null,
+      ACTIVE: true, RULE_PERIOD: 10, RULE_PRIORITY: 1, RULE_EXPIRY_DATE: null,
+      UPDATED_BY: null, UPDATED_TIME: null, VERSION: null };
+    return this._clone(this.rule);
+  },
+
+  // tbl_ruleLookup onRowSelected
+  async pickRule(row) {
+    if (!row || !row.RULE_ID) return;
+    try {
+      await this._resetForm("ctn_ruleForm");
+      await this.getRule(row.RULE_ID);
+      closeModal("mdl_ruleLookup");
+    } catch (e) {
+      showAlert(this.errorText() || e.message, "error");
+    }
+  },
+
+  // Confirm button: creates when the form is new, updates when a rule was picked
+  async confirmRule(values) {
+    try {
+      const r = this.ruleMode === "EDIT"
+        ? await this.updateRule(this.rule.RULE_ID, { ...values, VERSION: this.rule.VERSION })
+        : await this.createRule(values);
+      showAlert("Rule " + r.RULE_ID + " saved", "success");
+      return r;
+    } catch (e) {
+      showAlert(this.errorText() || e.message, "error");
+      return null;
+    }
+  },
+
+  // "Test SQL" button
+  async testSql(sql) {
+    try {
+      await this.testRule(sql);
+      showModal("mdl_testRule");
+    } catch (e) {
+      showAlert(this.errorText() || e.message, "error");
+    }
+  },
+
+  // =================================================================
+  // UI 2 - mock API endpoints
+  // =================================================================
+
+  // GET /rules?q=
+  async listRules(q = "") {
+    await this._delay();
+    const db = this._ensure();
+    this._requireRole("VIEWER");
+    const term = String(q || "").toLowerCase();
+    this.rules = db.rules
+      .filter(r => !term || [r.RULE_ID, r.TECH, r.SQL_COMMAND].some(v => String(v || "").toLowerCase().includes(term)))
+      .sort((a, b) => a.RULE_PRIORITY - b.RULE_PRIORITY || a.RULE_ID.localeCompare(b.RULE_ID))
+      .map(r => ({ TECH: r.TECH, RULE_ID: r.RULE_ID, SQL_COMMAND: r.SQL_COMMAND, EXTERNAL_PRIORITY: r.EXTERNAL_PRIORITY,
+                   ACTIVE: r.ACTIVE, RULE_PERIOD: r.RULE_PERIOD, RULE_PRIORITY: r.RULE_PRIORITY,
+                   RULE_EXPIRY_DATE: r.RULE_EXPIRY_DATE }));
+    return this._clone(this.rules);
+  },
+
+  // GET /rules/{RULE_ID}
+  async getRule(ruleId) {
+    await this._delay();
+    const db = this._ensure();
+    this._requireRole("VIEWER");
+    const r = db.rules.find(x => x.RULE_ID === ruleId);
+    if (!r) throw this._err(404, "NOT_FOUND", "Rule " + ruleId + " not found");
+    this.rule = this._clone(r);
+    this.ruleMode = "EDIT";
+    return this._clone(r);
+  },
+
+  // POST /rules
+  async createRule(values = {}) {
+    await this._delay();
+    const db = this._ensure();
+    this._requireRole("PLANNER");
+    const r = this._normRule(values);
+    if (r.SQL_COMMAND && !this._hasRole("CIM")) {
+      throw this._err(403, "FORBIDDEN", "Only the CIM role can set the SQL command");
+    }
+    if (db.rules.some(x => x.RULE_ID === r.RULE_ID)) {
+      throw this._err(409, "ALREADY_EXISTS", "Rule " + r.RULE_ID + " already exists");
+    }
+    const details = this._validateRule(r, true);
+    if (details.length) throw this._err(422, "VALIDATION_FAILED", details.length + " problem(s) found", details);
+    const row = { ...r, UPDATED_BY: this._user(), UPDATED_TIME: this._now(), VERSION: 1 };
+    db.rules.push(row);
+    this.db = db;
+    this.lastError = null;
+    this.rule = this._clone(row);
+    this.ruleMode = "EDIT";
+    await this.listRules("");
+    return this._clone(row);
+  },
+
+  // PUT /rules/{RULE_ID}   body includes VERSION
+  async updateRule(ruleId, values = {}) {
+    await this._delay();
+    const db = this._ensure();
+    this._requireRole("PLANNER");
+    const i = db.rules.findIndex(x => x.RULE_ID === ruleId);
+    if (i < 0) throw this._err(404, "NOT_FOUND", "Rule " + ruleId + " not found");
+    const cur = db.rules[i];
+    const r = this._normRule({ ...values, RULE_ID: ruleId });
+    if ((r.SQL_COMMAND || "") !== (cur.SQL_COMMAND || "") && !this._hasRole("CIM")) {
+      throw this._err(403, "FORBIDDEN", "Only the CIM role can change the SQL command");
+    }
+    if (Number(values.VERSION) !== cur.VERSION) {
+      throw this._err(409, "VERSION_CONFLICT", "Someone else changed this record. Reload and try again.");
+    }
+    const details = this._validateRule(r, false);
+    if (details.length) throw this._err(422, "VALIDATION_FAILED", details.length + " problem(s) found", details);
+    const before = this._clone(cur);
+    const after = { ...before, ...r, UPDATED_BY: this._user(), UPDATED_TIME: this._now(), VERSION: before.VERSION + 1 };
+    db.rules[i] = after;
+    this.db = db;
+    this.lastError = null;
+    this.rule = this._clone(after);
+    await this.listRules("");
+    return this._clone(after);
+  },
+
+  // POST /rules/test   body { SQL_COMMAND }
+  async testRule(sql) {
+    await this._delay();
+    const db = this._ensure();
+    this._requireRole("CIM");
+    const problem = this._sqlCheck(sql);
+    if (problem) throw this._err(422, "UNSAFE_SQL", problem, [{ FIELD: "SQL_COMMAND", MESSAGE: problem }]);
+    const rows = db.lots.slice(0, this.TEST_RULE_ROW_LIMIT);  // stub: always the same sample lots
+    this.testResult = { COLUMNS: Object.keys(db.lots[0] || {}), ROWS: this._clone(rows),
+                        ROW_COUNT: rows.length, TRUNCATED: db.lots.length > rows.length };
+    this.lastError = null;
+    return this._clone(this.testResult);
+  },
+
+  // =================================================================
+  // UI 3 - Manual Lot Override: button actions (never throw; show alerts)
+  // =================================================================
+
+  // The grid is a draft batch. Rows can come from a file, be typed in, edited or removed;
+  // every change re-validates the whole batch. ROW_NO is a hidden key for each draft row.
+
+  // FilePicker onFilesSelected: {{MockApi.loadFile(fp_upload.files[0])}}
+  // Replaces the current draft with the file's rows.
+  async loadFile(file) {
+    if (this._uploadRunning()) { showAlert("Wait for the current upload to finish", "warning"); return null; }
+    try {
+      const rows = this._toRows(file);
+      this._clearUpload();
+      this.uploadSeq = 0;
+      this.pendingUpload = rows.map(r => this._withRowNo(r));
+      const check = await this._revalidate();
+      if (check.VALID) showAlert(check.OK_COUNT + " row(s) loaded and ready to upload", "success");
+      else showAlert(check.ERROR_COUNT + " row(s) have problems - fix them in the grid or reload the file", "warning");
+      return check;
+    } catch (e) {
+      showAlert(e.message, "error");
+      return null;
+    }
+  },
+
+  // tbl_upload "Adding a row" onSave: {{MockApi.addUploadRow(tbl_upload.newRow)}}
+  async addUploadRow(newRow) {
+    if (!this._canEditBatch()) return null;
+    const row = this._asRows([newRow || {}])[0] || { TECH: "", LOT_ID: "", EXTERNAL_PRIORITY: "" };
+    this.pendingUpload = [...this.pendingUpload, this._withRowNo(row)];
+    return this._revalidate();
+  },
+
+  // tbl_upload onSave (row edited): {{MockApi.saveUploadRow(tbl_upload.updatedRow)}}
+  async saveUploadRow(updatedRow) {
+    if (!this._canEditBatch()) return null;
+    const no = Number(updatedRow && updatedRow.ROW_NO);
+    const i = this.pendingUpload.findIndex(r => r.ROW_NO === no);
+    if (i < 0) { showAlert("Row not found - reload the grid", "error"); return null; }
+    const row = this._asRows([updatedRow])[0] || { TECH: "", LOT_ID: "", EXTERNAL_PRIORITY: "" };
+    const next = [...this.pendingUpload];
+    next[i] = { ROW_NO: no, ...row };
+    this.pendingUpload = next;
+    return this._revalidate();
+  },
+
+  // "Remove" button column onClick: {{MockApi.removeUploadRow(tbl_upload.triggeredRow)}}
+  async removeUploadRow(row) {
+    if (!this._canEditBatch()) return null;
+    const no = Number(row && row.ROW_NO);
+    this.pendingUpload = this.pendingUpload.filter(r => r.ROW_NO !== no);
+    return this._revalidate();
+  },
+
+  // "Clear" button: empties the grid and starts a new batch
+  clearBatch() {
+    if (this._uploadRunning()) { showAlert("Wait for the current upload to finish", "warning"); return; }
+    this._clearUpload();
+    this.uploadSeq = 0;
+  },
+
+  // "Upload Priority" button
+  async uploadPriority() {
+    if (this.uploadStatus.BATCH_ID) { showAlert("This batch was already uploaded. Click Clear or load a file to start a new one.", "warning"); return null; }
+    try {
+      const r = await this.startUpload(this.pendingUpload);
+      this.pollUpload(r.BATCH_ID);
+      return r;
+    } catch (e) {
+      showAlert(this.errorText() || e.message, "error");
+      return null;
+    }
+  },
+
+  // Polls once a second until the job is DONE
+  pollUpload(batchId) {
+    clearInterval("mockUploadPoll");
+    setInterval(async () => {
+      const s = await this.getUploadStatus(batchId);
+      if (s.STATUS === "DONE" || s.STATUS === "FAILED") {
+        clearInterval("mockUploadPoll");
+        showAlert("Upload finished: " + s.OK_COUNT + " OK, " + s.FAILED_COUNT + " failed",
+                  s.FAILED_COUNT ? "warning" : "success");
+      }
+    }, 1000, "mockUploadPoll");
+  },
+
+  // =================================================================
+  // UI 3 - mock API endpoints
+  // =================================================================
+
+  // POST /manual-upload/validate   body { rows: [{ TECH, LOT_ID, EXTERNAL_PRIORITY }] }
+  async validateUpload(rows) {
+    await this._delay();
+    this._ensure();
+    this._requireRole("PLANNER");
+    this.uploadCheck = this._checkUpload(this._asRows(rows));
+    return this._clone(this.uploadCheck);
+  },
+
+  // POST /manual-upload
+  async startUpload(rows) {
+    await this._delay();
+    const db = this._ensure();
+    this._requireRole("PLANNER");
+    const check = this._checkUpload(this._asRows(rows));
+    this.uploadCheck = check;
+    if (!check.VALID) {
+      const details = check.ROWS.map((r, i) => ({ ROW_REF: "row " + (i + 1), FIELD: "", MESSAGE: r.STATUS }))
+        .filter(d => d.MESSAGE !== "OK");
+      throw this._err(422, "VALIDATION_FAILED",
+        check.ROWS.length ? details.length + " row(s) failed validation" : "Load a file first", details);
+    }
+    const user = this._user();
+    const batchId = this._uuid();
+    const created = Date.now();
+    // One LOT_PRIORITY_OVERRIDE row per lot, all sharing the new BATCH_ID
+    check.ROWS.forEach(r => db.overrides.push({ OVERRIDE_ID: db.nextOverrideId++, BATCH_ID: batchId,
+      TECH: r.TECH, LOT_ID: r.LOT_ID, EXTERNAL_PRIORITY: r.EXTERNAL_PRIORITY, APPLY_STATUS: "PENDING",
+      ERROR_MSG: null, CREATED_BY: user, CREATED_TIME: created, APPLIED_TIME: null }));
+    this.db = db;
+    this.lastError = null;
+    await this.getUploadStatus(batchId);
+    return { BATCH_ID: batchId };
+  },
+
+  // GET /manual-upload/{BATCH_ID}   computed from that batch's override rows.
+  // The mock "applies" one row per MOCK_ROW_MS to stand in for the engine.
+  async getUploadStatus(batchId) {
+    const db = this._ensure();
+    this._requireRole("VIEWER");
+    const rows = db.overrides.filter(o => o.BATCH_ID === batchId).sort((x, y) => x.OVERRIDE_ID - y.OVERRIDE_ID);
+    if (!rows.length) throw this._err(404, "NOT_FOUND", "Batch " + batchId + " not found");
+    const due = Math.floor((Date.now() - rows[0].CREATED_TIME) / this.MOCK_ROW_MS);
+    rows.forEach((o, i) => {
+      if (o.APPLY_STATUS === "PENDING" && i < due) {
+        const hold = o.LOT_ID.toUpperCase().includes("HOLD");
+        o.APPLY_STATUS = hold ? "FAILED" : "OK";
+        o.ERROR_MSG = hold ? "Lot is on hold (mock SiView error)" : null;
+        o.APPLIED_TIME = this._now();
+      }
+    });
+    const total = rows.length;
+    const pending = rows.filter(o => o.APPLY_STATUS === "PENDING").length;
+    const res = {
+      BATCH_ID: batchId,
+      STATUS: pending === total ? "PENDING" : pending === 0 ? "DONE" : "RUNNING",
+      PERCENT: Math.round(((total - pending) * 100) / total),
+      OK_COUNT: rows.filter(o => o.APPLY_STATUS === "OK").length,
+      FAILED_COUNT: rows.filter(o => o.APPLY_STATUS === "FAILED").length,
+      ROWS: rows.map(o => ({ TECH: o.TECH, LOT_ID: o.LOT_ID, EXTERNAL_PRIORITY: o.EXTERNAL_PRIORITY,
+        STATUS: o.APPLY_STATUS === "FAILED" ? o.ERROR_MSG : o.APPLY_STATUS })),
+    };
+    this.uploadStatus = res;
+    this.uploadRows = res.ROWS.map((r, i) => ({ ROW_NO: i + 1, ...r }));
+    return this._clone(res);
+  },
+
+  // =================================================================
+  // Helpers for widgets and debugging
+  // =================================================================
+  errorText() {
+    const e = this.lastError;
+    if (!e) return "";
+    const lines = (e.DETAILS || []).map(d => [d.ROW_REF, d.MESSAGE].filter(Boolean).join(": "));
+    return [e.MESSAGE, ...lines].join("\n");
+  },
+
+
+  // =================================================================
+  // Internal
+  // =================================================================
+  _seed() {
+    const now = this._now();
+    const bands = [[0.65, 0.7, 1], [0.7, 0.75, 1], [0.75, 0.8, 1], [0.8, 0.85, 2],
+                   [0.85, 0.9, 2], [0.9, 1, 3], [1, 1.1, 3], [1.1, 10000, 3]];
+    const rows = bands.map((b, i) => this._orderRow({
+      PARAM_ID: i + 1, TECH: "LOGIC", OPERATION_START: "0075.001", OPERATION_END: "1980.999",
+      RULE_FORMULA: "Cycle Time", RANGE_FROM: b[0], RANGE_TO: b[1], PRIORITY_NUMBER: b[2],
+      UPDATED_TIME: now, UPDATED_BY: "seed", VERSION: 1 }));
+    const rules = [
+      { TECH: "LOGIC", RULE_ID: "HOT_LOT_LOGIC",
+        SQL_COMMAND: "WITH hot AS (\n  SELECT LOT_ID FROM LOT_VIEW WHERE LOT_TYPE = 'HOT'\n)\nSELECT LOT_ID FROM hot",
+        EXTERNAL_PRIORITY: 5, ACTIVE: true, RULE_PERIOD: 10, RULE_PRIORITY: 1, RULE_EXPIRY_DATE: null,
+        UPDATED_BY: "seed", UPDATED_TIME: now, VERSION: 1 },
+      { TECH: "LOGIC", RULE_ID: "ENG_LOT_LOGIC",
+        SQL_COMMAND: "SELECT LOT_ID FROM LOT_VIEW WHERE LOT_TYPE = 'ENG'",
+        EXTERNAL_PRIORITY: 3, ACTIVE: false, RULE_PERIOD: 30, RULE_PRIORITY: 2, RULE_EXPIRY_DATE: null,
+        UPDATED_BY: "seed", UPDATED_TIME: now, VERSION: 1 },
+    ];
+    const ops = ["0075.001", "0210.050", "0480.120", "0990.300", "1500.010", "1975.500"];
+    const lots = Array.from({ length: 20 }, (_, i) => ({
+      LOT_ID: "N8P7" + (60 + i) + ".00", TECH: "LOGIC", OPERATION: ops[i % ops.length], EXTERNAL_PRIORITY: i % 4 }));
+    return { tables: { "AUTO PRIORITY": { rows, nextId: rows.length + 1 } },
+             rules, lots, overrides: [], nextOverrideId: 1 };
+  },
+
+  // Puts the form widgets back to their default values (which are bound to formData / rule)
+  async _resetForm(name) {
+    try { await resetWidget(name, true); } catch (e) { /* widget not on the page yet */ }
+  },
+
+  _ensure() {
+    if (!this.db) this.db = this._seed();
+    return this.db;
+  },
+
+  _keyField() {
+    const meta = this.TABLES[this.currentTable];
+    return meta ? meta.keyField : "PARAM_ID";
+  },
+
+  _clearPending() {
+    this.pending = { added: [], updated: {}, deleted: {} };
+    this.pendingCount = 0;
+  },
+
+  _clearUpload() {
+    this.pendingUpload = [];
+    this.uploadRows = [];
+    this.uploadCheck = { VALID: false, OK_COUNT: 0, ERROR_COUNT: 0, ROWS: [] };
+    this.uploadStatus = { BATCH_ID: null, STATUS: "", PERCENT: 0, OK_COUNT: 0, FAILED_COUNT: 0, ROWS: [] };
+    clearInterval("mockUploadPoll");
+  },
+
+  _uploadRunning() {
+    return this.uploadStatus.BATCH_ID && this.uploadStatus.STATUS !== "DONE" && this.uploadStatus.STATUS !== "FAILED";
+  },
+
+  _canEditBatch() {
+    if (this._uploadRunning()) { showAlert("Wait for the current upload to finish", "warning"); return false; }
+    if (this.uploadStatus.BATCH_ID) {
+      showAlert("This batch was already uploaded. Click Clear or load a file to start a new one.", "warning");
+      return false;
+    }
+    return true;
+  },
+
+  _withRowNo(row) {
+    this.uploadSeq += 1;
+    return { ROW_NO: this.uploadSeq, TECH: row.TECH, LOT_ID: row.LOT_ID, EXTERNAL_PRIORITY: row.EXTERNAL_PRIORITY };
+  },
+
+  // Re-checks the whole draft and rebuilds the grid rows (ROW_NO + values + STATUS)
+  async _revalidate() {
+    if (!this.pendingUpload.length) {
+      this.uploadCheck = { VALID: false, OK_COUNT: 0, ERROR_COUNT: 0, ROWS: [] };
+      this.uploadRows = [];
+      return this._clone(this.uploadCheck);
+    }
+    const check = await this.validateUpload(this.pendingUpload);
+    this.uploadRows = check.ROWS.map((r, i) => ({ ROW_NO: this.pendingUpload[i].ROW_NO, ...r }));
+    return check;
+  },
+
+  // What tbl_params shows: saved rows plus unsaved changes, with a CHANGE column
+  _refreshView() {
+    const key = this._keyField();
+    const p = this.pending;
+    const view = this.serverRows.map(r => {
+      const k = r[key];
+      if (p.deleted[k]) return { CHANGE: "DELETE", ...r };
+      if (p.updated[k]) return { CHANGE: "UPDATE", ...r, ...p.updated[k] };
+      return { CHANGE: "", ...r };
+    });
+    p.added.forEach(r => view.push({ CHANGE: "ADD", ...this._orderRow(r, true) }));
+    this.paramRows = view;
+    this.pendingCount = p.added.length + Object.keys(p.updated).length + Object.keys(p.deleted).length;
+  },
+
+  _editableCols() {
+    return this.TABLES["AUTO PRIORITY"].columns.filter(c => c.editable);
+  },
+
+  // Editable fields only, from a source row or the defaults
+  _editableTemplate(src = {}) {
+    const out = {};
+    this._editableCols().forEach(c => {
+      const v = src[c.name];
+      if (v !== undefined && v !== null && v !== "") out[c.name] = v;
+      else if (c.default !== undefined) out[c.name] = c.default;
+      else out[c.name] = c.type === "text" ? "" : 0;
+    });
+    return out;
+  },
+
+  // Converts form values to column types (keeps bad numbers as text so the check can report them)
+  _normRow(data = {}) {
+    const out = {};
+    this._editableCols().forEach(c => {
+      const raw = data[c.name];
+      if (raw === undefined || raw === null || String(raw).trim() === "") { out[c.name] = null; return; }
+      if (c.type === "text") { out[c.name] = String(raw).trim(); return; }
+      const n = Number(raw);
+      out[c.name] = isNaN(n) ? String(raw) : n;
+    });
+    return out;
+  },
+
+  _checkRow(row) {
+    const d = [];
+    this._editableCols().forEach(c => {
+      const v = row[c.name];
+      if (v === null || v === undefined || v === "") { d.push({ FIELD: c.name, MESSAGE: c.name + " is required" }); return; }
+      if (c.type !== "text" && typeof v !== "number") d.push({ FIELD: c.name, MESSAGE: c.name + " must be a number" });
+    });
+    if (d.length) return d;
+    const opRe = new RegExp(this.OPERATION_PATTERN);
+    ["OPERATION_START", "OPERATION_END"].forEach(f => {
+      if (!opRe.test(row[f])) d.push({ FIELD: f, MESSAGE: f + " must look like NNNN.NNN, e.g. 0075.001" });
+    });
+    if (!this.RULE_FORMULAS.includes(row.RULE_FORMULA)) {
+      d.push({ FIELD: "RULE_FORMULA", MESSAGE: "RULE_FORMULA must be one of: " + this.RULE_FORMULAS.join(", ") });
+    }
+    if (!Number.isInteger(row.PRIORITY_NUMBER) || row.PRIORITY_NUMBER < this.PRIORITY_MIN || row.PRIORITY_NUMBER > this.PRIORITY_MAX) {
+      d.push({ FIELD: "PRIORITY_NUMBER", MESSAGE: "PRIORITY_NUMBER must be a whole number from " + this.PRIORITY_MIN + " to " + this.PRIORITY_MAX });
+    }
+    if (!d.length && row.OPERATION_START > row.OPERATION_END) {
+      d.push({ FIELD: "OPERATION_END", MESSAGE: "OPERATION_END must be greater than or equal to OPERATION_START" });
+    }
+    if (row.RANGE_FROM >= row.RANGE_TO) d.push({ FIELD: "RANGE_TO", MESSAGE: "RANGE_TO must be greater than RANGE_FROM" });
+    return d;
+  },
+
+  // Same scope = same TECH, RULE_FORMULA, OPERATION_START/END and RANGE_FROM/TO (PRIORITY_NUMBER ignored)
+  _sameScope(a, b) {
+    return a.TECH === b.TECH && a.RULE_FORMULA === b.RULE_FORMULA
+      && a.OPERATION_START === b.OPERATION_START && a.OPERATION_END === b.OPERATION_END
+      && Number(a.RANGE_FROM) === Number(b.RANGE_FROM) && Number(a.RANGE_TO) === Number(b.RANGE_TO);
+  },
+
+  _pickEditable(row) {
+    const out = {};
+    this._editableCols().forEach(c => { out[c.name] = row[c.name]; });
+    return out;
+  },
+
+  // Puts fields in column order so the grid keeps its column order
+  _orderRow(row, keepMissing) {
+    const out = {};
+    this.TABLES["AUTO PRIORITY"].columns.forEach(c => {
+      if (row[c.name] !== undefined) out[c.name] = row[c.name];
+      else if (!keepMissing) out[c.name] = null;
+    });
+    return out;
+  },
+
+  _normRule(r = {}) {
+    const str = v => (v === undefined || v === null || String(v).trim() === "" ? null : String(v).trim());
+    return {
+      TECH: str(r.TECH),
+      RULE_ID: String(r.RULE_ID || "").trim(),
+      SQL_COMMAND: str(r.SQL_COMMAND),
+      EXTERNAL_PRIORITY: this._intOrNull(r.EXTERNAL_PRIORITY),
+      ACTIVE: this._bool(r.ACTIVE),
+      RULE_PERIOD: this._intOrNull(r.RULE_PERIOD),
+      RULE_PRIORITY: this._intOrNull(r.RULE_PRIORITY),
+      RULE_EXPIRY_DATE: r.RULE_EXPIRY_DATE ? String(r.RULE_EXPIRY_DATE).slice(0, 10) : null,
+    };
+  },
+
+  _validateRule(r, isCreate) {
+    const d = [];
+    if (!r.RULE_ID) d.push({ FIELD: "RULE_ID", MESSAGE: "RULE_ID is required" });
+    else if (r.RULE_ID.length > 30) d.push({ FIELD: "RULE_ID", MESSAGE: "RULE_ID is longer than 30 characters" });
+    if (!r.TECH) d.push({ FIELD: "TECH", MESSAGE: "TECH is required" });
+    if (!r.SQL_COMMAND) d.push({ FIELD: "SQL_COMMAND", MESSAGE: "SQL_COMMAND is required" });
+    else {
+      const problem = this._sqlCheck(r.SQL_COMMAND);
+      if (problem) d.push({ FIELD: "SQL_COMMAND", MESSAGE: problem });
+    }
+    if (!Number.isInteger(r.EXTERNAL_PRIORITY) || r.EXTERNAL_PRIORITY < this.PRIORITY_MIN || r.EXTERNAL_PRIORITY > this.PRIORITY_MAX) {
+      d.push({ FIELD: "EXTERNAL_PRIORITY", MESSAGE: "EXTERNAL_PRIORITY must be a whole number from " + this.PRIORITY_MIN + " to " + this.PRIORITY_MAX });
+    }
+    if (!Number.isInteger(r.RULE_PERIOD) || r.RULE_PERIOD <= 0) {
+      d.push({ FIELD: "RULE_PERIOD", MESSAGE: "RULE_PERIOD must be a positive whole number of minutes" });
+    }
+    if (!Number.isInteger(r.RULE_PRIORITY) || r.RULE_PRIORITY < 1) {
+      d.push({ FIELD: "RULE_PRIORITY", MESSAGE: "RULE_PRIORITY must be a whole number of 1 or more" });
+    }
+    if (r.RULE_EXPIRY_DATE) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(r.RULE_EXPIRY_DATE)) d.push({ FIELD: "RULE_EXPIRY_DATE", MESSAGE: "RULE_EXPIRY_DATE must be a date" });
+      else if (isCreate && r.RULE_EXPIRY_DATE < this._today()) d.push({ FIELD: "RULE_EXPIRY_DATE", MESSAGE: "RULE_EXPIRY_DATE is in the past" });
+    }
+    return d;
+  },
+
+  // Second layer only - the real API also relies on a read-only DB account.
+  _sqlCheck(sql) {
+    const s = String(sql || "").replace(/\/\*[\s\S]*?\*\//g, " ").replace(/--[^\n]*/g, " ").trim();
+    if (!s) return "SQL is empty";
+    if (!/^(WITH|SELECT)\b/i.test(s)) return "SQL must start with WITH or SELECT";
+    const body = s.replace(/'(?:[^']|'')*'/g, "''").replace(/;\s*$/, "");
+    if (body.includes(";")) return "Only one SQL statement is allowed";
+    const bad = body.match(/\b(INSERT|UPDATE|DELETE|MERGE|DROP|ALTER|CREATE|TRUNCATE|GRANT|REVOKE|CALL|EXECUTE|EXEC|LOCK)\b/i);
+    if (bad) return "Keyword " + bad[1].toUpperCase() + " is not allowed";
+    return null;
+  },
+
+  // ---------- upload file reading ----------
+  UNREADABLE: "Cannot read the file. Use a CSV or Excel file with columns TECH, LOT_ID, EXTERNAL_PRIORITY, and set the FilePicker Data Format to 'Array of Objects'.",
+
+  // Accepts whatever the FilePicker gives: a file object, rows, Excel sheets, CSV text or Base64
+  _toRows(input) {
+    let data = input;
+    if (data && typeof data === "object" && !Array.isArray(data) && data.data !== undefined) data = data.data;
+    if (typeof data === "string") data = this._parseCsv(this._decode(data));
+    if (Array.isArray(data) && data.length && data[0] && Array.isArray(data[0].data)) data = data[0].data;  // Excel: first sheet
+    if (!Array.isArray(data)) throw this._err(422, "UNREADABLE_FILE", this.UNREADABLE);
+    const rows = this._asRows(data);
+    if (!rows.length) throw this._err(422, "UNREADABLE_FILE", "The file has no data rows");
+    if (!rows.some(r => String(r.LOT_ID).trim() !== "")) throw this._err(422, "UNREADABLE_FILE", this.UNREADABLE);
+    return rows;
+  },
+
+  // Keeps only the three upload columns; header names are matched loosely
+  _asRows(list) {
+    if (!Array.isArray(list)) return [];
+    const alias = { TECH: "TECH", TECHNOLOGY: "TECH", LOT_ID: "LOT_ID", LOTID: "LOT_ID", LOT: "LOT_ID",
+                    EXTERNAL_PRIORITY: "EXTERNAL_PRIORITY", EP: "EXTERNAL_PRIORITY", PRIORITY: "EXTERNAL_PRIORITY" };
+    return list
+      .filter(r => r && typeof r === "object" && Object.keys(r).some(k => String(r[k] === null || r[k] === undefined ? "" : r[k]).trim() !== ""))
+      .map(r => {
+        const out = { TECH: "", LOT_ID: "", EXTERNAL_PRIORITY: "" };
+        Object.keys(r).forEach(k => {
+          const norm = String(k).trim().toUpperCase().replace(/[^A-Z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+          if (alias[norm]) out[alias[norm]] = r[k];
+        });
+        return out;
+      });
+  },
+
+  _decode(text) {
+    if (!text.startsWith("data:")) return text;
+    const comma = text.indexOf(",");
+    const meta = text.slice(0, comma);
+    const body = text.slice(comma + 1);
+    let out;
+    try {
+      out = meta.includes("base64") ? atob(body) : decodeURIComponent(body);
+    } catch (e) {
+      throw this._err(422, "UNREADABLE_FILE", this.UNREADABLE);
+    }
+    if (out.startsWith("PK")) throw this._err(422, "UNREADABLE_FILE", this.UNREADABLE);  // Excel sent as Base64
+    return out;
+  },
+
+  _parseCsv(text) {
+    const lines = String(text).replace(/^\s+/, "").split(/\r?\n/).filter(l => l.trim() !== "");
+    if (!lines.length) return [];
+    const split = line => {
+      const out = [];
+      let cur = "";
+      let quoted = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (quoted) {
+          if (ch === '"') {
+            if (line[i + 1] === '"') { cur += '"'; i++; } else quoted = false;
+          } else cur += ch;
+        } else if (ch === '"') quoted = true;
+        else if (ch === ",") { out.push(cur); cur = ""; }
+        else cur += ch;
+      }
+      out.push(cur);
+      return out.map(s => s.trim());
+    };
+    const head = split(lines[0]);
+    return lines.slice(1).map(line => {
+      const v = split(line);
+      const o = {};
+      head.forEach((h, i) => { o[h] = v[i] === undefined ? "" : v[i]; });
+      return o;
+    });
+  },
+
+  _checkUpload(rows) {
+    const list = (Array.isArray(rows) ? rows : []).map(r => ({
+      TECH: String(r.TECH === undefined || r.TECH === null ? "" : r.TECH).trim(),
+      LOT_ID: String(r.LOT_ID === undefined || r.LOT_ID === null ? "" : r.LOT_ID).trim(),
+      EXTERNAL_PRIORITY: this._num(r.EXTERNAL_PRIORITY),
+    }));
+    const counts = {};
+    list.forEach(r => { counts[r.LOT_ID] = (counts[r.LOT_ID] || 0) + 1; });
+    const out = list.map(r => {
+      let status = "OK";
+      if (!r.LOT_ID) status = "LOT_ID is required";
+      else if (r.LOT_ID.length > 20) status = "LOT_ID is longer than 20 characters";
+      else if (counts[r.LOT_ID] > 1) status = "Duplicate LOT_ID in this file";
+      else if (!r.TECH) status = "TECH is required";
+      else if (!Number.isInteger(r.EXTERNAL_PRIORITY) || r.EXTERNAL_PRIORITY < this.PRIORITY_MIN || r.EXTERNAL_PRIORITY > this.PRIORITY_MAX) {
+        status = "EXTERNAL_PRIORITY must be a whole number from " + this.PRIORITY_MIN + " to " + this.PRIORITY_MAX;
+      } else if (r.LOT_ID.toUpperCase().startsWith("X")) {
+        status = "Lot not found in SiView";  // stub rule for testing the error path
+      }
+      return { TECH: r.TECH, LOT_ID: r.LOT_ID, EXTERNAL_PRIORITY: isNaN(r.EXTERNAL_PRIORITY) ? null : r.EXTERNAL_PRIORITY, STATUS: status };
+    });
+    const ok = out.filter(r => r.STATUS === "OK").length;
+    return { VALID: out.length > 0 && ok === out.length, OK_COUNT: ok, ERROR_COUNT: out.length - ok, ROWS: out };
+  },
+
+  // ---------- small helpers ----------
+  _delay() {
+    return new Promise(resolve => setTimeout(resolve, this.MOCK_DELAY_MS));
+  },
+
+  _clone(v) {
+    return v === undefined ? undefined : JSON.parse(JSON.stringify(v));
+  },
+
+  _uuid() {
+    const h = n => Array.from({ length: n }, () => Math.floor(Math.random() * 16).toString(16)).join("");
+    return h(8) + "-" + h(4) + "-4" + h(3) + "-a" + h(3) + "-" + h(12);
+  },
+
+  _now() {
+    return new Date().toISOString();
+  },
+
+  _today() {
+    return new Date().toISOString().slice(0, 10);
+  },
+
+  _user() {
+    try {
+      return (appsmith && appsmith.user && appsmith.user.email) || "dev-user";
+    } catch (e) {
+      return "dev-user";
+    }
+  },
+
+  _num(v) {
+    return v === "" || v === null || v === undefined ? NaN : Number(v);
+  },
+
+  _intOrNull(v) {
+    return v === "" || v === null || v === undefined ? null : Number(v);
+  },
+
+  _bool(v) {
+    return v === true || v === "Y" || v === "y" || v === "true" || v === 1;
+  },
+
+  _hasRole(min) {
+    const rank = { VIEWER: 1, PLANNER: 2, CIM: 3, ADMIN: 4 };
+    return (rank[this.MOCK_ROLE] || 0) >= rank[min];
+  },
+
+  _requireRole(min) {
+    if (!this._hasRole(min)) {
+      throw this._err(403, "FORBIDDEN", "Requires the " + min + " role (mock role is " + this.MOCK_ROLE + ")");
+    }
+  },
+
+  _err(status, code, message, details = []) {
+    const body = { ERROR_CODE: code, MESSAGE: message, DETAILS: details };
+    this.lastError = body;
+    const e = new Error(message);
+    e.status = status;
+    e.body = body;
+    return e;
+  },
+
+};

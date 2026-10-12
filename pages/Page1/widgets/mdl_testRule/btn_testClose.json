@@ -1,0 +1,50 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 50,
+  "boxShadow": "none",
+  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+  "buttonVariant": "SECONDARY",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "buttonColor"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "o084iwwlnc",
+  "leftColumn": 52,
+  "minWidth": 120,
+  "mobileBottomRow": 50,
+  "mobileLeftColumn": 52,
+  "mobileRightColumn": 63,
+  "mobileTopRow": 46,
+  "needsErrorInfo": false,
+  "onClick": "{{closeModal('mdl_testRule')}}",
+  "parentColumnSpace": 11.875,
+  "parentId": "i0o6lrefk1",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "recaptchaType": "V3",
+  "renderMode": "CANVAS",
+  "resetFormOnClick": false,
+  "responsiveBehavior": "hug",
+  "rightColumn": 63,
+  "text": "Close",
+  "topRow": 46,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "x44vmnpuoi",
+  "widgetName": "btn_testClose"
+}

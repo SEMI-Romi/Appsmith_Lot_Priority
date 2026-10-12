@@ -1,0 +1,6469 @@
+From 34f3e52c370c73a561cbcffa759b83d3ae7ef048 Mon Sep 17 00:00:00 2001
+From: Romi <maliffromi@gmail.com>
+Date: Mon, 12 Oct 2026 12:08:29 +0800
+Subject: [PATCH] Lot Auto Priority UI: 3 tabs, 4 modals, bindings to MockApi
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01SDwpie6NNM6NE1zKTTG7mL
+---
+ .../Tabs1/Container1/ButtonGroup1.json        | 150 -----
+ .../widgets/Tabs1/Container1/Container1.json  |  91 ---
+ .../widgets/Tabs1/Container2/Container2.json  |  92 ---
+ .../widgets/Tabs1/Container2/Table1.json      |  97 ---
+ .../Tabs1/Container3/ButtonGroup2.json        | 150 -----
+ .../widgets/Tabs1/Container4/Container4.json  |  91 ---
+ .../widgets/Tabs1/Container4/Progress1.json   |  40 --
+ .../widgets/Tabs1/Container5/Container5.json  |  92 ---
+ .../widgets/Tabs1/Container5/Table2.json      |  95 ---
+ pages/Page1/widgets/Tabs1/Tabs1.json          |  50 +-
+ .../{Container3/Button1.json => btnAdd.json}  |  34 +-
+ pages/Page1/widgets/Tabs1/btnDelete.json      |  50 ++
+ pages/Page1/widgets/Tabs1/btnDiscard.json     |  53 ++
+ pages/Page1/widgets/Tabs1/btnSave.json        |  53 ++
+ pages/Page1/widgets/Tabs1/btnUpdate.json      |  53 ++
+ .../Button2.json => btn_clear.json}           |  36 +-
+ pages/Page1/widgets/Tabs1/btn_upload.json     |  53 ++
+ .../Tabs1/ctn_ruleForm/btn_newRule.json       |  50 ++
+ .../Tabs1/ctn_ruleForm/btn_pickRule.json      |  50 ++
+ .../Tabs1/ctn_ruleForm/btn_ruleCancel.json    |  50 ++
+ .../Tabs1/ctn_ruleForm/btn_ruleConfirm.json   |  50 ++
+ .../Tabs1/ctn_ruleForm/btn_testSql.json       |  50 ++
+ .../ctn_ruleForm.json}                        |  51 +-
+ .../Tabs1/ctn_ruleForm/dp_ruleExpiry.json     |  59 ++
+ .../inp_extPriority.json}                     |  40 +-
+ .../Tabs1/ctn_ruleForm/inp_ruleId.json        |  64 ++
+ .../Tabs1/ctn_ruleForm/inp_rulePeriod.json    |  61 ++
+ .../Tabs1/ctn_ruleForm/inp_rulePriority.json  |  61 ++
+ .../Tabs1/ctn_ruleForm/inp_sqlCommand.json    |  61 ++
+ .../sel_ruleTech.json}                        |  43 +-
+ .../widgets/Tabs1/ctn_ruleForm/sw_active.json |  49 ++
+ .../Tabs1/ctn_ruleForm/txt_ruleMode.json      |  55 ++
+ .../FilePicker1.json => fp_upload.json}       |  45 +-
+ pages/Page1/widgets/Tabs1/prg_upload.json     |  49 ++
+ .../Select1.json => sel_ParamTable.json}      |  46 +-
+ pages/Page1/widgets/Tabs1/tbl_params.json     | 574 ++++++++++++++++++
+ pages/Page1/widgets/Tabs1/tbl_upload.json     | 461 ++++++++++++++
+ pages/Page1/widgets/Tabs1/txt_pending.json    |  55 ++
+ pages/Page1/widgets/Tabs1/txt_uploadHelp.json |  52 ++
+ .../widgets/Tabs1/txt_uploadSummary.json      |  55 ++
+ .../mdl_confirmDelete/btn_deleteCancel.json   |  50 ++
+ .../mdl_confirmDelete/btn_deleteConfirm.json  |  47 ++
+ .../mdl_confirmDelete/mdl_confirmDelete.json  |  77 +++
+ .../mdl_confirmDelete/txt_deleteBody.json     |  55 ++
+ .../mdl_confirmDelete/txt_deleteTitle.json    |  52 ++
+ .../widgets/mdl_rowForm/btn_formCancel.json   |  50 ++
+ .../widgets/mdl_rowForm/btn_formSubmit.json   |  53 ++
+ .../Page1/widgets/mdl_rowForm/inp_opEnd.json  |  61 ++
+ .../widgets/mdl_rowForm/inp_opStart.json      |  61 ++
+ .../widgets/mdl_rowForm/inp_priorityNo.json   |  61 ++
+ .../widgets/mdl_rowForm/inp_rangeFrom.json    |  61 ++
+ .../widgets/mdl_rowForm/inp_rangeTo.json      |  61 ++
+ .../widgets/mdl_rowForm/mdl_rowForm.json      |  77 +++
+ .../widgets/mdl_rowForm/sel_rowFormula.json   |  65 ++
+ .../widgets/mdl_rowForm/sel_rowTech.json      |  65 ++
+ .../widgets/mdl_rowForm/txt_formTitle.json    |  55 ++
+ .../mdl_ruleLookup/btn_lookupClose.json       |  50 ++
+ .../mdl_ruleLookup/mdl_ruleLookup.json        |  77 +++
+ .../mdl_ruleLookup/tbl_ruleLookup.json        | 420 +++++++++++++
+ .../mdl_ruleLookup/txt_lookupTitle.json       |  52 ++
+ .../widgets/mdl_testRule/btn_testClose.json   |  50 ++
+ .../widgets/mdl_testRule/mdl_testRule.json    |  77 +++
+ .../widgets/mdl_testRule/tbl_testRule.json    | 259 ++++++++
+ .../widgets/mdl_testRule/txt_testCount.json   |  55 ++
+ pages/Page1/widgets/txt_mockRole.json         |  55 ++
+ pages/Page1/widgets/txt_title.json            |  52 ++
+ 66 files changed, 4459 insertions(+), 1050 deletions(-)
+ delete mode 100644 pages/Page1/widgets/Tabs1/Container1/ButtonGroup1.json
+ delete mode 100644 pages/Page1/widgets/Tabs1/Container1/Container1.json
+ delete mode 100644 pages/Page1/widgets/Tabs1/Container2/Container2.json
+ delete mode 100644 pages/Page1/widgets/Tabs1/Container2/Table1.json
+ delete mode 100644 pages/Page1/widgets/Tabs1/Container3/ButtonGroup2.json
+ delete mode 100644 pages/Page1/widgets/Tabs1/Container4/Container4.json
+ delete mode 100644 pages/Page1/widgets/Tabs1/Container4/Progress1.json
+ delete mode 100644 pages/Page1/widgets/Tabs1/Container5/Container5.json
+ delete mode 100644 pages/Page1/widgets/Tabs1/Container5/Table2.json
+ rename pages/Page1/widgets/Tabs1/{Container3/Button1.json => btnAdd.json} (60%)
+ create mode 100644 pages/Page1/widgets/Tabs1/btnDelete.json
+ create mode 100644 pages/Page1/widgets/Tabs1/btnDiscard.json
+ create mode 100644 pages/Page1/widgets/Tabs1/btnSave.json
+ create mode 100644 pages/Page1/widgets/Tabs1/btnUpdate.json
+ rename pages/Page1/widgets/Tabs1/{Container4/Button2.json => btn_clear.json} (58%)
+ create mode 100644 pages/Page1/widgets/Tabs1/btn_upload.json
+ create mode 100644 pages/Page1/widgets/Tabs1/ctn_ruleForm/btn_newRule.json
+ create mode 100644 pages/Page1/widgets/Tabs1/ctn_ruleForm/btn_pickRule.json
+ create mode 100644 pages/Page1/widgets/Tabs1/ctn_ruleForm/btn_ruleCancel.json
+ create mode 100644 pages/Page1/widgets/Tabs1/ctn_ruleForm/btn_ruleConfirm.json
+ create mode 100644 pages/Page1/widgets/Tabs1/ctn_ruleForm/btn_testSql.json
+ rename pages/Page1/widgets/Tabs1/{Container3/Container3.json => ctn_ruleForm/ctn_ruleForm.json} (63%)
+ create mode 100644 pages/Page1/widgets/Tabs1/ctn_ruleForm/dp_ruleExpiry.json
+ rename pages/Page1/widgets/Tabs1/{Container3/Input1.json => ctn_ruleForm/inp_extPriority.json} (62%)
+ create mode 100644 pages/Page1/widgets/Tabs1/ctn_ruleForm/inp_ruleId.json
+ create mode 100644 pages/Page1/widgets/Tabs1/ctn_ruleForm/inp_rulePeriod.json
+ create mode 100644 pages/Page1/widgets/Tabs1/ctn_ruleForm/inp_rulePriority.json
+ create mode 100644 pages/Page1/widgets/Tabs1/ctn_ruleForm/inp_sqlCommand.json
+ rename pages/Page1/widgets/Tabs1/{Container3/Select2.json => ctn_ruleForm/sel_ruleTech.json} (58%)
+ create mode 100644 pages/Page1/widgets/Tabs1/ctn_ruleForm/sw_active.json
+ create mode 100644 pages/Page1/widgets/Tabs1/ctn_ruleForm/txt_ruleMode.json
+ rename pages/Page1/widgets/Tabs1/{Container4/FilePicker1.json => fp_upload.json} (50%)
+ create mode 100644 pages/Page1/widgets/Tabs1/prg_upload.json
+ rename pages/Page1/widgets/Tabs1/{Container1/Select1.json => sel_ParamTable.json} (55%)
+ create mode 100644 pages/Page1/widgets/Tabs1/tbl_params.json
+ create mode 100644 pages/Page1/widgets/Tabs1/tbl_upload.json
+ create mode 100644 pages/Page1/widgets/Tabs1/txt_pending.json
+ create mode 100644 pages/Page1/widgets/Tabs1/txt_uploadHelp.json
+ create mode 100644 pages/Page1/widgets/Tabs1/txt_uploadSummary.json
+ create mode 100644 pages/Page1/widgets/mdl_confirmDelete/btn_deleteCancel.json
+ create mode 100644 pages/Page1/widgets/mdl_confirmDelete/btn_deleteConfirm.json
+ create mode 100644 pages/Page1/widgets/mdl_confirmDelete/mdl_confirmDelete.json
+ create mode 100644 pages/Page1/widgets/mdl_confirmDelete/txt_deleteBody.json
+ create mode 100644 pages/Page1/widgets/mdl_confirmDelete/txt_deleteTitle.json
+ create mode 100644 pages/Page1/widgets/mdl_rowForm/btn_formCancel.json
+ create mode 100644 pages/Page1/widgets/mdl_rowForm/btn_formSubmit.json
+ create mode 100644 pages/Page1/widgets/mdl_rowForm/inp_opEnd.json
+ create mode 100644 pages/Page1/widgets/mdl_rowForm/inp_opStart.json
+ create mode 100644 pages/Page1/widgets/mdl_rowForm/inp_priorityNo.json
+ create mode 100644 pages/Page1/widgets/mdl_rowForm/inp_rangeFrom.json
+ create mode 100644 pages/Page1/widgets/mdl_rowForm/inp_rangeTo.json
+ create mode 100644 pages/Page1/widgets/mdl_rowForm/mdl_rowForm.json
+ create mode 100644 pages/Page1/widgets/mdl_rowForm/sel_rowFormula.json
+ create mode 100644 pages/Page1/widgets/mdl_rowForm/sel_rowTech.json
+ create mode 100644 pages/Page1/widgets/mdl_rowForm/txt_formTitle.json
+ create mode 100644 pages/Page1/widgets/mdl_ruleLookup/btn_lookupClose.json
+ create mode 100644 pages/Page1/widgets/mdl_ruleLookup/mdl_ruleLookup.json
+ create mode 100644 pages/Page1/widgets/mdl_ruleLookup/tbl_ruleLookup.json
+ create mode 100644 pages/Page1/widgets/mdl_ruleLookup/txt_lookupTitle.json
+ create mode 100644 pages/Page1/widgets/mdl_testRule/btn_testClose.json
+ create mode 100644 pages/Page1/widgets/mdl_testRule/mdl_testRule.json
+ create mode 100644 pages/Page1/widgets/mdl_testRule/tbl_testRule.json
+ create mode 100644 pages/Page1/widgets/mdl_testRule/txt_testCount.json
+ create mode 100644 pages/Page1/widgets/txt_mockRole.json
+ create mode 100644 pages/Page1/widgets/txt_title.json
+
+diff --git a/pages/Page1/widgets/Tabs1/Container1/ButtonGroup1.json b/pages/Page1/widgets/Tabs1/Container1/ButtonGroup1.json
+deleted file mode 100644
+index 6fcfcad..0000000
+--- a/pages/Page1/widgets/Tabs1/Container1/ButtonGroup1.json
++++ /dev/null
+@@ -1,150 +0,0 @@
+-{
+-  "animateLoading": true,
+-  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-  "bottomRow": 5,
+-  "boxShadow": "none",
+-  "buttonVariant": "PRIMARY",
+-  "childStylesheet": {
+-    "button": {
+-      "buttonColor": "{{appsmith.theme.colors.primaryColor}}"
+-    }
+-  },
+-  "dynamicBindingPathList": [
+-    {
+-      "key": "borderRadius"
+-    },
+-    {
+-      "key": "groupButtons.groupButton1.buttonColor"
+-    },
+-    {
+-      "key": "groupButtons.groupButton2.buttonColor"
+-    },
+-    {
+-      "key": "groupButtons.groupButton3.buttonColor"
+-    },
+-    {
+-      "key": "groupButtons.groupButtonb13i61b15z.buttonColor"
+-    }
+-  ],
+-  "dynamicTriggerPathList": [],
+-  "groupButtons": {
+-    "groupButton1": {
+-      "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+-      "buttonType": "SIMPLE",
+-      "disabledWhenInvalid": false,
+-      "iconName": "heart",
+-      "id": "groupButton1",
+-      "index": 0,
+-      "isDisabled": false,
+-      "isVisible": true,
+-      "label": "Favorite",
+-      "menuItems": {},
+-      "placement": "CENTER",
+-      "widgetId": ""
+-    },
+-    "groupButton2": {
+-      "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+-      "buttonType": "SIMPLE",
+-      "disabledWhenInvalid": false,
+-      "iconName": "add",
+-      "id": "groupButton2",
+-      "index": 1,
+-      "isDisabled": false,
+-      "isVisible": true,
+-      "label": "Add",
+-      "menuItems": {},
+-      "placement": "CENTER",
+-      "widgetId": ""
+-    },
+-    "groupButton3": {
+-      "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+-      "buttonType": "MENU",
+-      "disabledWhenInvalid": false,
+-      "iconName": "more",
+-      "id": "groupButton3",
+-      "index": 2,
+-      "isDisabled": false,
+-      "isVisible": true,
+-      "label": "More",
+-      "menuItems": {
+-        "menuItem1": {
+-          "backgroundColor": "#FFFFFF",
+-          "disabledWhenInvalid": false,
+-          "id": "menuItem1",
+-          "index": 0,
+-          "isDisabled": false,
+-          "isVisible": true,
+-          "label": "First Option",
+-          "onClick": "",
+-          "widgetId": ""
+-        },
+-        "menuItem2": {
+-          "backgroundColor": "#FFFFFF",
+-          "disabledWhenInvalid": false,
+-          "id": "menuItem2",
+-          "index": 1,
+-          "isDisabled": false,
+-          "isVisible": true,
+-          "label": "Second Option",
+-          "onClick": "",
+-          "widgetId": ""
+-        },
+-        "menuItem3": {
+-          "backgroundColor": "#DD4B34",
+-          "disabledWhenInvalid": false,
+-          "iconAlign": "right",
+-          "iconColor": "#FFFFFF",
+-          "iconName": "trash",
+-          "id": "menuItem3",
+-          "index": 2,
+-          "isDisabled": false,
+-          "isVisible": true,
+-          "label": "Delete",
+-          "onClick": "",
+-          "textColor": "#FFFFFF",
+-          "widgetId": ""
+-        }
+-      },
+-      "placement": "CENTER",
+-      "widgetId": ""
+-    },
+-    "groupButtonb13i61b15z": {
+-      "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+-      "buttonType": "SIMPLE",
+-      "id": "groupButtonb13i61b15z",
+-      "index": 3,
+-      "isDisabled": false,
+-      "isSeparator": false,
+-      "isVisible": true,
+-      "itemType": "BUTTON",
+-      "label": "Do something",
+-      "menuItems": {},
+-      "placement": "CENTER",
+-      "variant": "filled",
+-      "widgetId": "hd9zrv7y8d"
+-    }
+-  },
+-  "isCanvas": false,
+-  "isLoading": false,
+-  "isVisible": true,
+-  "key": "vy8xjvtnq6",
+-  "leftColumn": 20,
+-  "minWidth": 450,
+-  "mobileBottomRow": 5,
+-  "mobileLeftColumn": 19,
+-  "mobileRightColumn": 43,
+-  "mobileTopRow": 1,
+-  "needsErrorInfo": false,
+-  "orientation": "horizontal",
+-  "parentColumnSpace": 19.625,
+-  "parentId": "w2x4u0f8js",
+-  "parentRowSpace": 10,
+-  "renderMode": "CANVAS",
+-  "responsiveBehavior": "fill",
+-  "rightColumn": 44,
+-  "topRow": 1,
+-  "type": "BUTTON_GROUP_WIDGET",
+-  "version": 1,
+-  "widgetId": "z2mznwz5fw",
+-  "widgetName": "ButtonGroup1"
+-}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/Container1/Container1.json b/pages/Page1/widgets/Tabs1/Container1/Container1.json
+deleted file mode 100644
+index e926d70..0000000
+--- a/pages/Page1/widgets/Tabs1/Container1/Container1.json
++++ /dev/null
+@@ -1,91 +0,0 @@
+-{
+-  "animateLoading": true,
+-  "backgroundColor": "#FFFFFF",
+-  "borderColor": "#E0DEDE",
+-  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-  "borderWidth": "1",
+-  "bottomRow": 10,
+-  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+-  "children": [
+-    {
+-      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-      "bottomRow": 100,
+-      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+-      "canExtend": false,
+-      "containerStyle": "none",
+-      "detachFromLayout": true,
+-      "dynamicBindingPathList": [
+-        {
+-          "key": "borderRadius"
+-        },
+-        {
+-          "key": "boxShadow"
+-        }
+-      ],
+-      "dynamicHeight": "AUTO_HEIGHT",
+-      "flexLayers": [],
+-      "isLoading": false,
+-      "isVisible": true,
+-      "key": "jyvbcodhbr",
+-      "leftColumn": 0,
+-      "maxDynamicHeight": 9000,
+-      "minDynamicHeight": 4,
+-      "minHeight": 100,
+-      "minWidth": 450,
+-      "mobileBottomRow": 100,
+-      "mobileLeftColumn": 0,
+-      "mobileRightColumn": 478.5,
+-      "mobileTopRow": 0,
+-      "needsErrorInfo": false,
+-      "parentColumnSpace": 1,
+-      "parentId": "rle0oa2h3j",
+-      "parentRowSpace": 1,
+-      "renderMode": "CANVAS",
+-      "responsiveBehavior": "fill",
+-      "rightColumn": 478.5,
+-      "topRow": 0,
+-      "type": "CANVAS_WIDGET",
+-      "version": 1,
+-      "widgetId": "w2x4u0f8js",
+-      "widgetName": "Canvas3"
+-    }
+-  ],
+-  "containerStyle": "card",
+-  "dynamicBindingPathList": [
+-    {
+-      "key": "borderRadius"
+-    },
+-    {
+-      "key": "boxShadow"
+-    }
+-  ],
+-  "dynamicHeight": "AUTO_HEIGHT",
+-  "flexVerticalAlignment": "stretch",
+-  "isCanvas": true,
+-  "isLoading": false,
+-  "isVisible": true,
+-  "key": "7u2pg367s6",
+-  "leftColumn": 0,
+-  "maxDynamicHeight": 9000,
+-  "minDynamicHeight": 10,
+-  "minWidth": 450,
+-  "mobileBottomRow": 10,
+-  "mobileLeftColumn": 0,
+-  "mobileRightColumn": 24,
+-  "mobileTopRow": 0,
+-  "needsErrorInfo": false,
+-  "originalBottomRow": 10,
+-  "originalTopRow": 0,
+-  "parentColumnSpace": 19.9375,
+-  "parentId": "mqzoeeffok",
+-  "parentRowSpace": 10,
+-  "renderMode": "CANVAS",
+-  "responsiveBehavior": "fill",
+-  "rightColumn": 64,
+-  "shouldScrollContents": true,
+-  "topRow": 0,
+-  "type": "CONTAINER_WIDGET",
+-  "version": 1,
+-  "widgetId": "rle0oa2h3j",
+-  "widgetName": "Container1"
+-}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/Container2/Container2.json b/pages/Page1/widgets/Tabs1/Container2/Container2.json
+deleted file mode 100644
+index a34a525..0000000
+--- a/pages/Page1/widgets/Tabs1/Container2/Container2.json
++++ /dev/null
+@@ -1,92 +0,0 @@
+-{
+-  "animateLoading": true,
+-  "backgroundColor": "#FFFFFF",
+-  "borderColor": "#E0DEDE",
+-  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-  "borderWidth": "1",
+-  "bottomRow": 70,
+-  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+-  "children": [
+-    {
+-      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-      "bottomRow": 590,
+-      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+-      "canExtend": false,
+-      "containerStyle": "none",
+-      "detachFromLayout": true,
+-      "dynamicBindingPathList": [
+-        {
+-          "key": "borderRadius"
+-        },
+-        {
+-          "key": "boxShadow"
+-        }
+-      ],
+-      "dynamicHeight": "AUTO_HEIGHT",
+-      "flexLayers": [],
+-      "isLoading": false,
+-      "isVisible": true,
+-      "key": "jyvbcodhbr",
+-      "leftColumn": 0,
+-      "maxDynamicHeight": 9000,
+-      "minDynamicHeight": 4,
+-      "minHeight": 100,
+-      "minWidth": 450,
+-      "mobileBottomRow": 100,
+-      "mobileLeftColumn": 0,
+-      "mobileRightColumn": 478.5,
+-      "mobileTopRow": 0,
+-      "needsErrorInfo": false,
+-      "parentColumnSpace": 1,
+-      "parentId": "5x3axvgh32",
+-      "parentRowSpace": 1,
+-      "renderMode": "CANVAS",
+-      "responsiveBehavior": "fill",
+-      "rightColumn": 478.5,
+-      "topRow": 0,
+-      "type": "CANVAS_WIDGET",
+-      "version": 1,
+-      "widgetId": "hc34bph03n",
+-      "widgetName": "Canvas4"
+-    }
+-  ],
+-  "containerStyle": "card",
+-  "dynamicBindingPathList": [
+-    {
+-      "key": "borderRadius"
+-    },
+-    {
+-      "key": "boxShadow"
+-    }
+-  ],
+-  "dynamicHeight": "FIXED",
+-  "dynamicTriggerPathList": [],
+-  "flexVerticalAlignment": "stretch",
+-  "isCanvas": true,
+-  "isLoading": false,
+-  "isVisible": true,
+-  "key": "7u2pg367s6",
+-  "leftColumn": 0,
+-  "maxDynamicHeight": 9000,
+-  "minDynamicHeight": 10,
+-  "minWidth": 450,
+-  "mobileBottomRow": 21,
+-  "mobileLeftColumn": 0,
+-  "mobileRightColumn": 24,
+-  "mobileTopRow": 11,
+-  "needsErrorInfo": false,
+-  "originalBottomRow": 70,
+-  "originalTopRow": 11,
+-  "parentColumnSpace": 19.9375,
+-  "parentId": "mqzoeeffok",
+-  "parentRowSpace": 10,
+-  "renderMode": "CANVAS",
+-  "responsiveBehavior": "fill",
+-  "rightColumn": 64,
+-  "shouldScrollContents": true,
+-  "topRow": 11,
+-  "type": "CONTAINER_WIDGET",
+-  "version": 1,
+-  "widgetId": "5x3axvgh32",
+-  "widgetName": "Container2"
+-}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/Container2/Table1.json b/pages/Page1/widgets/Tabs1/Container2/Table1.json
+deleted file mode 100644
+index 232036d..0000000
+--- a/pages/Page1/widgets/Tabs1/Container2/Table1.json
++++ /dev/null
+@@ -1,97 +0,0 @@
+-{
+-  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+-  "animateLoading": true,
+-  "borderColor": "#E0DEDE",
+-  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-  "borderWidth": "1",
+-  "bottomRow": 56,
+-  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+-  "cachedTableData": {},
+-  "canFreezeColumn": true,
+-  "childStylesheet": {
+-    "button": {
+-      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-      "boxShadow": "none",
+-      "buttonColor": "{{appsmith.theme.colors.primaryColor}}"
+-    },
+-    "editActions": {
+-      "discardBorderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-      "discardButtonColor": "{{appsmith.theme.colors.primaryColor}}",
+-      "saveBorderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-      "saveButtonColor": "{{appsmith.theme.colors.primaryColor}}"
+-    },
+-    "iconButton": {
+-      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-      "boxShadow": "none",
+-      "buttonColor": "{{appsmith.theme.colors.primaryColor}}"
+-    },
+-    "menuButton": {
+-      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-      "boxShadow": "none",
+-      "menuColor": "{{appsmith.theme.colors.primaryColor}}"
+-    }
+-  },
+-  "columnOrder": [],
+-  "columnUpdatedAt": 1791774681862,
+-  "columnWidthMap": {},
+-  "customIsLoading": false,
+-  "customIsLoadingValue": "",
+-  "defaultPageSize": 0,
+-  "defaultSelectedRowIndex": 0,
+-  "defaultSelectedRowIndices": [
+-    0
+-  ],
+-  "delimiter": ",",
+-  "dynamicBindingPathList": [
+-    {
+-      "key": "accentColor"
+-    },
+-    {
+-      "key": "borderRadius"
+-    },
+-    {
+-      "key": "boxShadow"
+-    }
+-  ],
+-  "dynamicPropertyPathList": [],
+-  "enableClientSideSearch": true,
+-  "endOfData": false,
+-  "flexVerticalAlignment": "start",
+-  "horizontalAlignment": "LEFT",
+-  "inlineEditingSaveOption": "ROW_LEVEL",
+-  "isLoading": false,
+-  "isSortable": true,
+-  "isVisible": true,
+-  "isVisibleDownload": true,
+-  "isVisibleFilters": false,
+-  "isVisiblePagination": true,
+-  "isVisibleSearch": true,
+-  "key": "jqy2a8i5bw",
+-  "label": "Data",
+-  "leftColumn": 0,
+-  "minWidth": 450,
+-  "mobileBottomRow": 42,
+-  "mobileLeftColumn": 0,
+-  "mobileRightColumn": 25,
+-  "mobileTopRow": 14,
+-  "needsErrorInfo": false,
+-  "originalBottomRow": 42,
+-  "originalTopRow": 14,
+-  "parentColumnSpace": 19.9375,
+-  "parentId": "hc34bph03n",
+-  "parentRowSpace": 10,
+-  "primaryColumns": {},
+-  "renderMode": "CANVAS",
+-  "responsiveBehavior": "fill",
+-  "rightColumn": 64,
+-  "searchKey": "",
+-  "tableData": "",
+-  "textSize": "0.875rem",
+-  "topRow": 1,
+-  "totalRecordsCount": 0,
+-  "type": "TABLE_WIDGET_V2",
+-  "version": 2,
+-  "verticalAlignment": "CENTER",
+-  "widgetId": "f9ivflls4k",
+-  "widgetName": "Table1"
+-}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/Container3/ButtonGroup2.json b/pages/Page1/widgets/Tabs1/Container3/ButtonGroup2.json
+deleted file mode 100644
+index e6f607a..0000000
+--- a/pages/Page1/widgets/Tabs1/Container3/ButtonGroup2.json
++++ /dev/null
+@@ -1,150 +0,0 @@
+-{
+-  "animateLoading": true,
+-  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-  "bottomRow": 65,
+-  "boxShadow": "none",
+-  "buttonVariant": "PRIMARY",
+-  "childStylesheet": {
+-    "button": {
+-      "buttonColor": "{{appsmith.theme.colors.primaryColor}}"
+-    }
+-  },
+-  "dynamicBindingPathList": [
+-    {
+-      "key": "borderRadius"
+-    },
+-    {
+-      "key": "groupButtons.groupButton1.buttonColor"
+-    },
+-    {
+-      "key": "groupButtons.groupButton2.buttonColor"
+-    },
+-    {
+-      "key": "groupButtons.groupButton3.buttonColor"
+-    },
+-    {
+-      "key": "groupButtons.groupButtoncmrzo2c63f.buttonColor"
+-    }
+-  ],
+-  "dynamicTriggerPathList": [],
+-  "groupButtons": {
+-    "groupButton1": {
+-      "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+-      "buttonType": "SIMPLE",
+-      "disabledWhenInvalid": false,
+-      "iconName": "heart",
+-      "id": "groupButton1",
+-      "index": 0,
+-      "isDisabled": false,
+-      "isVisible": true,
+-      "label": "Favorite",
+-      "menuItems": {},
+-      "placement": "CENTER",
+-      "widgetId": ""
+-    },
+-    "groupButton2": {
+-      "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+-      "buttonType": "SIMPLE",
+-      "disabledWhenInvalid": false,
+-      "iconName": "add",
+-      "id": "groupButton2",
+-      "index": 1,
+-      "isDisabled": false,
+-      "isVisible": true,
+-      "label": "Add",
+-      "menuItems": {},
+-      "placement": "CENTER",
+-      "widgetId": ""
+-    },
+-    "groupButton3": {
+-      "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+-      "buttonType": "MENU",
+-      "disabledWhenInvalid": false,
+-      "iconName": "more",
+-      "id": "groupButton3",
+-      "index": 2,
+-      "isDisabled": false,
+-      "isVisible": true,
+-      "label": "More",
+-      "menuItems": {
+-        "menuItem1": {
+-          "backgroundColor": "#FFFFFF",
+-          "disabledWhenInvalid": false,
+-          "id": "menuItem1",
+-          "index": 0,
+-          "isDisabled": false,
+-          "isVisible": true,
+-          "label": "First Option",
+-          "onClick": "",
+-          "widgetId": ""
+-        },
+-        "menuItem2": {
+-          "backgroundColor": "#FFFFFF",
+-          "disabledWhenInvalid": false,
+-          "id": "menuItem2",
+-          "index": 1,
+-          "isDisabled": false,
+-          "isVisible": true,
+-          "label": "Second Option",
+-          "onClick": "",
+-          "widgetId": ""
+-        },
+-        "menuItem3": {
+-          "backgroundColor": "#DD4B34",
+-          "disabledWhenInvalid": false,
+-          "iconAlign": "right",
+-          "iconColor": "#FFFFFF",
+-          "iconName": "trash",
+-          "id": "menuItem3",
+-          "index": 2,
+-          "isDisabled": false,
+-          "isVisible": true,
+-          "label": "Delete",
+-          "onClick": "",
+-          "textColor": "#FFFFFF",
+-          "widgetId": ""
+-        }
+-      },
+-      "placement": "CENTER",
+-      "widgetId": ""
+-    },
+-    "groupButtoncmrzo2c63f": {
+-      "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+-      "buttonType": "SIMPLE",
+-      "id": "groupButtoncmrzo2c63f",
+-      "index": 3,
+-      "isDisabled": false,
+-      "isSeparator": false,
+-      "isVisible": true,
+-      "itemType": "BUTTON",
+-      "label": "Do something",
+-      "menuItems": {},
+-      "placement": "CENTER",
+-      "variant": "filled",
+-      "widgetId": "byo47yixtq"
+-    }
+-  },
+-  "isCanvas": false,
+-  "isLoading": false,
+-  "isVisible": true,
+-  "key": "vy8xjvtnq6",
+-  "leftColumn": 31,
+-  "minWidth": 450,
+-  "mobileBottomRow": 65,
+-  "mobileLeftColumn": 39,
+-  "mobileRightColumn": 63,
+-  "mobileTopRow": 61,
+-  "needsErrorInfo": false,
+-  "orientation": "horizontal",
+-  "parentColumnSpace": 19.625,
+-  "parentId": "x31wyhx83e",
+-  "parentRowSpace": 10,
+-  "renderMode": "CANVAS",
+-  "responsiveBehavior": "fill",
+-  "rightColumn": 63,
+-  "topRow": 61,
+-  "type": "BUTTON_GROUP_WIDGET",
+-  "version": 1,
+-  "widgetId": "5kz3c0vqxo",
+-  "widgetName": "ButtonGroup2"
+-}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/Container4/Container4.json b/pages/Page1/widgets/Tabs1/Container4/Container4.json
+deleted file mode 100644
+index 12e2c85..0000000
+--- a/pages/Page1/widgets/Tabs1/Container4/Container4.json
++++ /dev/null
+@@ -1,91 +0,0 @@
+-{
+-  "animateLoading": true,
+-  "backgroundColor": "#FFFFFF",
+-  "borderColor": "#E0DEDE",
+-  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-  "borderWidth": "1",
+-  "bottomRow": 10,
+-  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+-  "children": [
+-    {
+-      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-      "bottomRow": 100,
+-      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+-      "canExtend": false,
+-      "containerStyle": "none",
+-      "detachFromLayout": true,
+-      "dynamicBindingPathList": [
+-        {
+-          "key": "borderRadius"
+-        },
+-        {
+-          "key": "boxShadow"
+-        }
+-      ],
+-      "dynamicHeight": "AUTO_HEIGHT",
+-      "flexLayers": [],
+-      "isLoading": false,
+-      "isVisible": true,
+-      "key": "jyvbcodhbr",
+-      "leftColumn": 0,
+-      "maxDynamicHeight": 9000,
+-      "minDynamicHeight": 4,
+-      "minHeight": 100,
+-      "minWidth": 450,
+-      "mobileBottomRow": 100,
+-      "mobileLeftColumn": 0,
+-      "mobileRightColumn": 478.5,
+-      "mobileTopRow": 0,
+-      "needsErrorInfo": false,
+-      "parentColumnSpace": 1,
+-      "parentId": "hma3tk9kux",
+-      "parentRowSpace": 1,
+-      "renderMode": "CANVAS",
+-      "responsiveBehavior": "fill",
+-      "rightColumn": 478.5,
+-      "topRow": 0,
+-      "type": "CANVAS_WIDGET",
+-      "version": 1,
+-      "widgetId": "hc5j4sl8vw",
+-      "widgetName": "Canvas7"
+-    }
+-  ],
+-  "containerStyle": "card",
+-  "dynamicBindingPathList": [
+-    {
+-      "key": "borderRadius"
+-    },
+-    {
+-      "key": "boxShadow"
+-    }
+-  ],
+-  "dynamicHeight": "AUTO_HEIGHT",
+-  "flexVerticalAlignment": "stretch",
+-  "isCanvas": true,
+-  "isLoading": false,
+-  "isVisible": true,
+-  "key": "7u2pg367s6",
+-  "leftColumn": 0,
+-  "maxDynamicHeight": 9000,
+-  "minDynamicHeight": 10,
+-  "minWidth": 450,
+-  "mobileBottomRow": 10,
+-  "mobileLeftColumn": 0,
+-  "mobileRightColumn": 24,
+-  "mobileTopRow": 0,
+-  "needsErrorInfo": false,
+-  "originalBottomRow": 10,
+-  "originalTopRow": 0,
+-  "parentColumnSpace": 19.9375,
+-  "parentId": "5x9bg43q7v",
+-  "parentRowSpace": 10,
+-  "renderMode": "CANVAS",
+-  "responsiveBehavior": "fill",
+-  "rightColumn": 64,
+-  "shouldScrollContents": true,
+-  "topRow": 0,
+-  "type": "CONTAINER_WIDGET",
+-  "version": 1,
+-  "widgetId": "hma3tk9kux",
+-  "widgetName": "Container4"
+-}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/Container4/Progress1.json b/pages/Page1/widgets/Tabs1/Container4/Progress1.json
+deleted file mode 100644
+index 14da4bf..0000000
+--- a/pages/Page1/widgets/Tabs1/Container4/Progress1.json
++++ /dev/null
+@@ -1,40 +0,0 @@
+-{
+-  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-  "bottomRow": 5,
+-  "counterClosewise": false,
+-  "dynamicBindingPathList": [
+-    {
+-      "key": "fillColor"
+-    },
+-    {
+-      "key": "borderRadius"
+-    }
+-  ],
+-  "fillColor": "{{appsmith.theme.colors.primaryColor}}",
+-  "isCanvas": false,
+-  "isIndeterminate": false,
+-  "isLoading": false,
+-  "isVisible": true,
+-  "key": "p7d3enlx0k",
+-  "leftColumn": 32,
+-  "mobileBottomRow": 5,
+-  "mobileLeftColumn": 32,
+-  "mobileRightColumn": 60,
+-  "mobileTopRow": 1,
+-  "needsErrorInfo": false,
+-  "parentColumnSpace": 19.625,
+-  "parentId": "hc5j4sl8vw",
+-  "parentRowSpace": 10,
+-  "progress": 50,
+-  "progressType": "linear",
+-  "renderMode": "CANVAS",
+-  "responsiveBehavior": "fill",
+-  "rightColumn": 60,
+-  "showResult": false,
+-  "steps": 1,
+-  "topRow": 1,
+-  "type": "PROGRESS_WIDGET",
+-  "version": 1,
+-  "widgetId": "ogcg6wqluq",
+-  "widgetName": "Progress1"
+-}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/Container5/Container5.json b/pages/Page1/widgets/Tabs1/Container5/Container5.json
+deleted file mode 100644
+index f9e788c..0000000
+--- a/pages/Page1/widgets/Tabs1/Container5/Container5.json
++++ /dev/null
+@@ -1,92 +0,0 @@
+-{
+-  "animateLoading": true,
+-  "backgroundColor": "#FFFFFF",
+-  "borderColor": "#E0DEDE",
+-  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-  "borderWidth": "1",
+-  "bottomRow": 69,
+-  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+-  "children": [
+-    {
+-      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-      "bottomRow": 580,
+-      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+-      "canExtend": false,
+-      "containerStyle": "none",
+-      "detachFromLayout": true,
+-      "dynamicBindingPathList": [
+-        {
+-          "key": "borderRadius"
+-        },
+-        {
+-          "key": "boxShadow"
+-        }
+-      ],
+-      "dynamicHeight": "AUTO_HEIGHT",
+-      "flexLayers": [],
+-      "isLoading": false,
+-      "isVisible": true,
+-      "key": "jyvbcodhbr",
+-      "leftColumn": 0,
+-      "maxDynamicHeight": 9000,
+-      "minDynamicHeight": 4,
+-      "minHeight": 100,
+-      "minWidth": 450,
+-      "mobileBottomRow": 100,
+-      "mobileLeftColumn": 0,
+-      "mobileRightColumn": 478.5,
+-      "mobileTopRow": 0,
+-      "needsErrorInfo": false,
+-      "parentColumnSpace": 1,
+-      "parentId": "f60md7uoth",
+-      "parentRowSpace": 1,
+-      "renderMode": "CANVAS",
+-      "responsiveBehavior": "fill",
+-      "rightColumn": 478.5,
+-      "topRow": 0,
+-      "type": "CANVAS_WIDGET",
+-      "version": 1,
+-      "widgetId": "wg7ruq5g93",
+-      "widgetName": "Canvas8"
+-    }
+-  ],
+-  "containerStyle": "card",
+-  "dynamicBindingPathList": [
+-    {
+-      "key": "borderRadius"
+-    },
+-    {
+-      "key": "boxShadow"
+-    }
+-  ],
+-  "dynamicHeight": "FIXED",
+-  "dynamicTriggerPathList": [],
+-  "flexVerticalAlignment": "stretch",
+-  "isCanvas": true,
+-  "isLoading": false,
+-  "isVisible": true,
+-  "key": "7u2pg367s6",
+-  "leftColumn": 0,
+-  "maxDynamicHeight": 9000,
+-  "minDynamicHeight": 10,
+-  "minWidth": 450,
+-  "mobileBottomRow": 21,
+-  "mobileLeftColumn": 0,
+-  "mobileRightColumn": 24,
+-  "mobileTopRow": 11,
+-  "needsErrorInfo": false,
+-  "originalBottomRow": 69,
+-  "originalTopRow": 11,
+-  "parentColumnSpace": 19.9375,
+-  "parentId": "5x9bg43q7v",
+-  "parentRowSpace": 10,
+-  "renderMode": "CANVAS",
+-  "responsiveBehavior": "fill",
+-  "rightColumn": 64,
+-  "shouldScrollContents": true,
+-  "topRow": 11,
+-  "type": "CONTAINER_WIDGET",
+-  "version": 1,
+-  "widgetId": "f60md7uoth",
+-  "widgetName": "Container5"
+-}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/Container5/Table2.json b/pages/Page1/widgets/Tabs1/Container5/Table2.json
+deleted file mode 100644
+index 070080e..0000000
+--- a/pages/Page1/widgets/Tabs1/Container5/Table2.json
++++ /dev/null
+@@ -1,95 +0,0 @@
+-{
+-  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+-  "animateLoading": true,
+-  "borderColor": "#E0DEDE",
+-  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-  "borderWidth": "1",
+-  "bottomRow": 28,
+-  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+-  "cachedTableData": {},
+-  "canFreezeColumn": true,
+-  "childStylesheet": {
+-    "button": {
+-      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-      "boxShadow": "none",
+-      "buttonColor": "{{appsmith.theme.colors.primaryColor}}"
+-    },
+-    "editActions": {
+-      "discardBorderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-      "discardButtonColor": "{{appsmith.theme.colors.primaryColor}}",
+-      "saveBorderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-      "saveButtonColor": "{{appsmith.theme.colors.primaryColor}}"
+-    },
+-    "iconButton": {
+-      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-      "boxShadow": "none",
+-      "buttonColor": "{{appsmith.theme.colors.primaryColor}}"
+-    },
+-    "menuButton": {
+-      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-      "boxShadow": "none",
+-      "menuColor": "{{appsmith.theme.colors.primaryColor}}"
+-    }
+-  },
+-  "columnOrder": [],
+-  "columnUpdatedAt": 1791774681862,
+-  "columnWidthMap": {},
+-  "customIsLoading": false,
+-  "customIsLoadingValue": "",
+-  "defaultPageSize": 0,
+-  "defaultSelectedRowIndex": 0,
+-  "defaultSelectedRowIndices": [
+-    0
+-  ],
+-  "delimiter": ",",
+-  "dynamicBindingPathList": [
+-    {
+-      "key": "accentColor"
+-    },
+-    {
+-      "key": "borderRadius"
+-    },
+-    {
+-      "key": "boxShadow"
+-    }
+-  ],
+-  "dynamicPropertyPathList": [],
+-  "enableClientSideSearch": true,
+-  "endOfData": false,
+-  "flexVerticalAlignment": "start",
+-  "horizontalAlignment": "LEFT",
+-  "inlineEditingSaveOption": "ROW_LEVEL",
+-  "isLoading": false,
+-  "isSortable": true,
+-  "isVisible": true,
+-  "isVisibleDownload": true,
+-  "isVisibleFilters": false,
+-  "isVisiblePagination": true,
+-  "isVisibleSearch": true,
+-  "key": "jqy2a8i5bw",
+-  "label": "Data",
+-  "leftColumn": 0,
+-  "minWidth": 450,
+-  "mobileBottomRow": 28,
+-  "mobileLeftColumn": 0,
+-  "mobileRightColumn": 34,
+-  "mobileTopRow": 0,
+-  "needsErrorInfo": false,
+-  "parentColumnSpace": 19.625,
+-  "parentId": "wg7ruq5g93",
+-  "parentRowSpace": 10,
+-  "primaryColumns": {},
+-  "renderMode": "CANVAS",
+-  "responsiveBehavior": "fill",
+-  "rightColumn": 64,
+-  "searchKey": "",
+-  "tableData": "",
+-  "textSize": "0.875rem",
+-  "topRow": 0,
+-  "totalRecordsCount": 0,
+-  "type": "TABLE_WIDGET_V2",
+-  "version": 2,
+-  "verticalAlignment": "CENTER",
+-  "widgetId": "vydend3mov",
+-  "widgetName": "Table2"
+-}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/Tabs1.json b/pages/Page1/widgets/Tabs1/Tabs1.json
+index d01b1f5..0af7683 100644
+--- a/pages/Page1/widgets/Tabs1/Tabs1.json
++++ b/pages/Page1/widgets/Tabs1/Tabs1.json
+@@ -5,12 +5,12 @@
+   "borderColor": "#E0DEDE",
+   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+   "borderWidth": 1,
+-  "bottomRow": 97,
++  "bottomRow": 100,
+   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+   "children": [
+     {
+       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-      "bottomRow": 730,
++      "bottomRow": 880,
+       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+       "canExtend": true,
+       "detachFromLayout": true,
+@@ -31,9 +31,9 @@
+       "leftColumn": 0,
+       "maxDynamicHeight": 9000,
+       "minDynamicHeight": 4,
+-      "minHeight": 150,
++      "minHeight": 880,
+       "minWidth": 450,
+-      "mobileBottomRow": 150,
++      "mobileBottomRow": 880,
+       "mobileLeftColumn": 0,
+       "mobileRightColumn": 486,
+       "mobileTopRow": 0,
+@@ -46,7 +46,7 @@
+       "rightColumn": 486,
+       "shouldScrollContents": false,
+       "tabId": "tab1",
+-      "tabName": "Tab 1",
++      "tabName": "Maintain Table",
+       "topRow": 0,
+       "type": "CANVAS_WIDGET",
+       "version": 1,
+@@ -55,7 +55,7 @@
+     },
+     {
+       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-      "bottomRow": 730,
++      "bottomRow": 880,
+       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+       "canExtend": true,
+       "detachFromLayout": true,
+@@ -76,9 +76,9 @@
+       "leftColumn": 0,
+       "maxDynamicHeight": 9000,
+       "minDynamicHeight": 4,
+-      "minHeight": 150,
++      "minHeight": 880,
+       "minWidth": 450,
+-      "mobileBottomRow": 150,
++      "mobileBottomRow": 880,
+       "mobileLeftColumn": 0,
+       "mobileRightColumn": 486,
+       "mobileTopRow": 0,
+@@ -91,7 +91,7 @@
+       "rightColumn": 486,
+       "shouldScrollContents": false,
+       "tabId": "tab2",
+-      "tabName": "Tab 2",
++      "tabName": "Rule Config",
+       "topRow": 0,
+       "type": "CANVAS_WIDGET",
+       "version": 1,
+@@ -100,9 +100,9 @@
+     },
+     {
+       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-      "bottomRow": 730,
++      "bottomRow": 880,
+       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+-      "canExtend": false,
++      "canExtend": true,
+       "containerStyle": "none",
+       "detachFromLayout": true,
+       "dynamicBindingPathList": [
+@@ -121,12 +121,12 @@
+       "leftColumn": 0,
+       "maxDynamicHeight": 9000,
+       "minDynamicHeight": 4,
+-      "minHeight": 770,
++      "minHeight": 880,
+       "minWidth": 450,
+-      "mobileBottomRow": 771,
++      "mobileBottomRow": 880,
+       "mobileLeftColumn": 0,
+       "mobileRightColumn": 1296,
+-      "mobileTopRow": 1,
++      "mobileTopRow": 0,
+       "needsErrorInfo": false,
+       "parentColumnSpace": 1,
+       "parentId": "jb1wbuktkc",
+@@ -135,15 +135,15 @@
+       "responsiveBehavior": "fill",
+       "rightColumn": 1296,
+       "tabId": "tabvalj6ehdx3",
+-      "tabName": "Tab 3",
+-      "topRow": 1,
++      "tabName": "Manual Lot Override",
++      "topRow": 0,
+       "type": "CANVAS_WIDGET",
+       "version": 1,
+       "widgetId": "5x9bg43q7v",
+       "widgetName": "Canvas6"
+     }
+   ],
+-  "defaultTab": "Tab 1",
++  "defaultTab": "Maintain Table",
+   "dynamicBindingPathList": [
+     {
+       "key": "accentColor"
+@@ -166,10 +166,10 @@
+   "maxDynamicHeight": 9000,
+   "minDynamicHeight": 15,
+   "minWidth": 450,
+-  "mobileBottomRow": 35,
+-  "mobileLeftColumn": 5,
+-  "mobileRightColumn": 29,
+-  "mobileTopRow": 20,
++  "mobileBottomRow": 100,
++  "mobileLeftColumn": 0,
++  "mobileRightColumn": 64,
++  "mobileTopRow": 7,
+   "needsErrorInfo": false,
+   "parentColumnSpace": 20.25,
+   "parentId": "0",
+@@ -184,7 +184,7 @@
+       "id": "tab1",
+       "index": 0,
+       "isVisible": true,
+-      "label": "Tab 1",
++      "label": "Maintain Table",
+       "positioning": "vertical",
+       "widgetId": "mqzoeeffok"
+     },
+@@ -192,7 +192,7 @@
+       "id": "tab2",
+       "index": 1,
+       "isVisible": true,
+-      "label": "Tab 2",
++      "label": "Rule Config",
+       "positioning": "vertical",
+       "widgetId": "nh0y08yy17"
+     },
+@@ -200,11 +200,11 @@
+       "id": "tabvalj6ehdx3",
+       "index": 2,
+       "isVisible": true,
+-      "label": "Tab 3",
++      "label": "Manual Lot Override",
+       "widgetId": "5x9bg43q7v"
+     }
+   },
+-  "topRow": 20,
++  "topRow": 7,
+   "type": "TABS_WIDGET",
+   "version": 3,
+   "widgetId": "jb1wbuktkc",
+diff --git a/pages/Page1/widgets/Tabs1/Container3/Button1.json b/pages/Page1/widgets/Tabs1/btnAdd.json
+similarity index 60%
+rename from pages/Page1/widgets/Tabs1/Container3/Button1.json
+rename to pages/Page1/widgets/Tabs1/btnAdd.json
+index 5634aa3..f88a0a4 100644
+--- a/pages/Page1/widgets/Tabs1/Container3/Button1.json
++++ b/pages/Page1/widgets/Tabs1/btnAdd.json
+@@ -1,7 +1,7 @@
+ {
+   "animateLoading": true,
+   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-  "bottomRow": 7,
++  "bottomRow": 8,
+   "boxShadow": "none",
+   "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+   "buttonVariant": "PRIMARY",
+@@ -14,31 +14,37 @@
+       "key": "borderRadius"
+     }
+   ],
++  "dynamicTriggerPathList": [
++    {
++      "key": "onClick"
++    }
++  ],
+   "isDefaultClickDisabled": true,
+   "isDisabled": false,
+   "isLoading": false,
+   "isVisible": true,
+-  "key": "ms2h99y775",
+-  "leftColumn": 20,
++  "key": "4mfyf6fbuk",
++  "leftColumn": 18,
+   "minWidth": 120,
+-  "mobileBottomRow": 7,
+-  "mobileLeftColumn": 20,
+-  "mobileRightColumn": 36,
+-  "mobileTopRow": 3,
++  "mobileBottomRow": 8,
++  "mobileLeftColumn": 18,
++  "mobileRightColumn": 25,
++  "mobileTopRow": 4,
+   "needsErrorInfo": false,
+-  "parentColumnSpace": 19.625,
+-  "parentId": "x31wyhx83e",
++  "onClick": "{{MockApi.openAdd(tbl_params.selectedRow)}}",
++  "parentColumnSpace": 19.9375,
++  "parentId": "mqzoeeffok",
+   "parentRowSpace": 10,
+   "placement": "CENTER",
+   "recaptchaType": "V3",
+   "renderMode": "CANVAS",
+   "resetFormOnClick": false,
+   "responsiveBehavior": "hug",
+-  "rightColumn": 36,
+-  "text": "Submit",
+-  "topRow": 3,
++  "rightColumn": 25,
++  "text": "Add",
++  "topRow": 4,
+   "type": "BUTTON_WIDGET",
+   "version": 1,
+-  "widgetId": "uusckqn8wz",
+-  "widgetName": "Button1"
++  "widgetId": "x17c4lv0k4",
++  "widgetName": "btnAdd"
+ }
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/btnDelete.json b/pages/Page1/widgets/Tabs1/btnDelete.json
+new file mode 100644
+index 0000000..9296cff
+--- /dev/null
++++ b/pages/Page1/widgets/Tabs1/btnDelete.json
+@@ -0,0 +1,50 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 8,
++  "boxShadow": "none",
++  "buttonColor": "#B91C1C",
++  "buttonVariant": "SECONDARY",
++  "disabledWhenInvalid": false,
++  "dynamicBindingPathList": [
++    {
++      "key": "borderRadius"
++    },
++    {
++      "key": "isDisabled"
++    }
++  ],
++  "dynamicTriggerPathList": [
++    {
++      "key": "onClick"
++    }
++  ],
++  "isDefaultClickDisabled": true,
++  "isDisabled": "{{!tbl_params.selectedRow.PARAM_ID}}",
++  "isLoading": false,
++  "isVisible": true,
++  "key": "1qx2j9vagm",
++  "leftColumn": 34,
++  "minWidth": 120,
++  "mobileBottomRow": 8,
++  "mobileLeftColumn": 34,
++  "mobileRightColumn": 41,
++  "mobileTopRow": 4,
++  "needsErrorInfo": false,
++  "onClick": "{{showModal('mdl_confirmDelete')}}",
++  "parentColumnSpace": 19.9375,
++  "parentId": "mqzoeeffok",
++  "parentRowSpace": 10,
++  "placement": "CENTER",
++  "recaptchaType": "V3",
++  "renderMode": "CANVAS",
++  "resetFormOnClick": false,
++  "responsiveBehavior": "hug",
++  "rightColumn": 41,
++  "text": "Delete",
++  "topRow": 4,
++  "type": "BUTTON_WIDGET",
++  "version": 1,
++  "widgetId": "0l5am9tlo7",
++  "widgetName": "btnDelete"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/btnDiscard.json b/pages/Page1/widgets/Tabs1/btnDiscard.json
+new file mode 100644
+index 0000000..a942d8e
+--- /dev/null
++++ b/pages/Page1/widgets/Tabs1/btnDiscard.json
+@@ -0,0 +1,53 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 8,
++  "boxShadow": "none",
++  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "buttonVariant": "TERTIARY",
++  "disabledWhenInvalid": false,
++  "dynamicBindingPathList": [
++    {
++      "key": "buttonColor"
++    },
++    {
++      "key": "borderRadius"
++    },
++    {
++      "key": "isDisabled"
++    }
++  ],
++  "dynamicTriggerPathList": [
++    {
++      "key": "onClick"
++    }
++  ],
++  "isDefaultClickDisabled": true,
++  "isDisabled": "{{!MockApi.pendingCount}}",
++  "isLoading": false,
++  "isVisible": true,
++  "key": "uzcvig1ko3",
++  "leftColumn": 46,
++  "minWidth": 120,
++  "mobileBottomRow": 8,
++  "mobileLeftColumn": 46,
++  "mobileRightColumn": 54,
++  "mobileTopRow": 4,
++  "needsErrorInfo": false,
++  "onClick": "{{MockApi.discardChanges()}}",
++  "parentColumnSpace": 19.9375,
++  "parentId": "mqzoeeffok",
++  "parentRowSpace": 10,
++  "placement": "CENTER",
++  "recaptchaType": "V3",
++  "renderMode": "CANVAS",
++  "resetFormOnClick": false,
++  "responsiveBehavior": "hug",
++  "rightColumn": 54,
++  "text": "Discard",
++  "topRow": 4,
++  "type": "BUTTON_WIDGET",
++  "version": 1,
++  "widgetId": "bn182ku032",
++  "widgetName": "btnDiscard"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/btnSave.json b/pages/Page1/widgets/Tabs1/btnSave.json
+new file mode 100644
+index 0000000..a8f656f
+--- /dev/null
++++ b/pages/Page1/widgets/Tabs1/btnSave.json
+@@ -0,0 +1,53 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 8,
++  "boxShadow": "none",
++  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "buttonVariant": "PRIMARY",
++  "disabledWhenInvalid": false,
++  "dynamicBindingPathList": [
++    {
++      "key": "buttonColor"
++    },
++    {
++      "key": "borderRadius"
++    },
++    {
++      "key": "isDisabled"
++    }
++  ],
++  "dynamicTriggerPathList": [
++    {
++      "key": "onClick"
++    }
++  ],
++  "isDefaultClickDisabled": true,
++  "isDisabled": "{{!MockApi.pendingCount}}",
++  "isLoading": false,
++  "isVisible": true,
++  "key": "akei3w5c6x",
++  "leftColumn": 54,
++  "minWidth": 120,
++  "mobileBottomRow": 8,
++  "mobileLeftColumn": 54,
++  "mobileRightColumn": 64,
++  "mobileTopRow": 4,
++  "needsErrorInfo": false,
++  "onClick": "{{MockApi.saveTable()}}",
++  "parentColumnSpace": 19.9375,
++  "parentId": "mqzoeeffok",
++  "parentRowSpace": 10,
++  "placement": "CENTER",
++  "recaptchaType": "V3",
++  "renderMode": "CANVAS",
++  "resetFormOnClick": false,
++  "responsiveBehavior": "hug",
++  "rightColumn": 64,
++  "text": "Save changes",
++  "topRow": 4,
++  "type": "BUTTON_WIDGET",
++  "version": 1,
++  "widgetId": "bh6zfzmgfp",
++  "widgetName": "btnSave"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/btnUpdate.json b/pages/Page1/widgets/Tabs1/btnUpdate.json
+new file mode 100644
+index 0000000..6a54a02
+--- /dev/null
++++ b/pages/Page1/widgets/Tabs1/btnUpdate.json
+@@ -0,0 +1,53 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 8,
++  "boxShadow": "none",
++  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "buttonVariant": "SECONDARY",
++  "disabledWhenInvalid": false,
++  "dynamicBindingPathList": [
++    {
++      "key": "buttonColor"
++    },
++    {
++      "key": "borderRadius"
++    },
++    {
++      "key": "isDisabled"
++    }
++  ],
++  "dynamicTriggerPathList": [
++    {
++      "key": "onClick"
++    }
++  ],
++  "isDefaultClickDisabled": true,
++  "isDisabled": "{{!tbl_params.selectedRow.PARAM_ID}}",
++  "isLoading": false,
++  "isVisible": true,
++  "key": "b3aohdkbim",
++  "leftColumn": 26,
++  "minWidth": 120,
++  "mobileBottomRow": 8,
++  "mobileLeftColumn": 26,
++  "mobileRightColumn": 33,
++  "mobileTopRow": 4,
++  "needsErrorInfo": false,
++  "onClick": "{{MockApi.openUpdate(tbl_params.selectedRow)}}",
++  "parentColumnSpace": 19.9375,
++  "parentId": "mqzoeeffok",
++  "parentRowSpace": 10,
++  "placement": "CENTER",
++  "recaptchaType": "V3",
++  "renderMode": "CANVAS",
++  "resetFormOnClick": false,
++  "responsiveBehavior": "hug",
++  "rightColumn": 33,
++  "text": "Update",
++  "topRow": 4,
++  "type": "BUTTON_WIDGET",
++  "version": 1,
++  "widgetId": "ojq43qbjo1",
++  "widgetName": "btnUpdate"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/Container4/Button2.json b/pages/Page1/widgets/Tabs1/btn_clear.json
+similarity index 58%
+rename from pages/Page1/widgets/Tabs1/Container4/Button2.json
+rename to pages/Page1/widgets/Tabs1/btn_clear.json
+index 880063d..67b3040 100644
+--- a/pages/Page1/widgets/Tabs1/Container4/Button2.json
++++ b/pages/Page1/widgets/Tabs1/btn_clear.json
+@@ -1,10 +1,10 @@
+ {
+   "animateLoading": true,
+   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-  "bottomRow": 5,
++  "bottomRow": 9,
+   "boxShadow": "none",
+   "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+-  "buttonVariant": "PRIMARY",
++  "buttonVariant": "SECONDARY",
+   "disabledWhenInvalid": false,
+   "dynamicBindingPathList": [
+     {
+@@ -14,31 +14,37 @@
+       "key": "borderRadius"
+     }
+   ],
++  "dynamicTriggerPathList": [
++    {
++      "key": "onClick"
++    }
++  ],
+   "isDefaultClickDisabled": true,
+   "isDisabled": false,
+   "isLoading": false,
+   "isVisible": true,
+-  "key": "ms2h99y775",
+-  "leftColumn": 16,
++  "key": "k2hz9hc1aa",
++  "leftColumn": 15,
+   "minWidth": 120,
+-  "mobileBottomRow": 5,
+-  "mobileLeftColumn": 16,
+-  "mobileRightColumn": 32,
+-  "mobileTopRow": 1,
++  "mobileBottomRow": 9,
++  "mobileLeftColumn": 15,
++  "mobileRightColumn": 24,
++  "mobileTopRow": 5,
+   "needsErrorInfo": false,
+-  "parentColumnSpace": 19.625,
+-  "parentId": "hc5j4sl8vw",
++  "onClick": "{{MockApi.clearBatch()}}",
++  "parentColumnSpace": 19.9375,
++  "parentId": "5x9bg43q7v",
+   "parentRowSpace": 10,
+   "placement": "CENTER",
+   "recaptchaType": "V3",
+   "renderMode": "CANVAS",
+   "resetFormOnClick": false,
+   "responsiveBehavior": "hug",
+-  "rightColumn": 32,
+-  "text": "Submit",
+-  "topRow": 1,
++  "rightColumn": 24,
++  "text": "Clear",
++  "topRow": 5,
+   "type": "BUTTON_WIDGET",
+   "version": 1,
+-  "widgetId": "yn7b4logln",
+-  "widgetName": "Button2"
++  "widgetId": "yu3xssm5ax",
++  "widgetName": "btn_clear"
+ }
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/btn_upload.json b/pages/Page1/widgets/Tabs1/btn_upload.json
+new file mode 100644
+index 0000000..1f942f1
+--- /dev/null
++++ b/pages/Page1/widgets/Tabs1/btn_upload.json
+@@ -0,0 +1,53 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 9,
++  "boxShadow": "none",
++  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "buttonVariant": "PRIMARY",
++  "disabledWhenInvalid": false,
++  "dynamicBindingPathList": [
++    {
++      "key": "buttonColor"
++    },
++    {
++      "key": "borderRadius"
++    },
++    {
++      "key": "isDisabled"
++    }
++  ],
++  "dynamicTriggerPathList": [
++    {
++      "key": "onClick"
++    }
++  ],
++  "isDefaultClickDisabled": true,
++  "isDisabled": "{{!MockApi.uploadCheck.VALID || !!MockApi.uploadStatus.BATCH_ID}}",
++  "isLoading": false,
++  "isVisible": true,
++  "key": "0njl9tjgvt",
++  "leftColumn": 50,
++  "minWidth": 120,
++  "mobileBottomRow": 9,
++  "mobileLeftColumn": 50,
++  "mobileRightColumn": 64,
++  "mobileTopRow": 5,
++  "needsErrorInfo": false,
++  "onClick": "{{MockApi.uploadPriority()}}",
++  "parentColumnSpace": 19.9375,
++  "parentId": "5x9bg43q7v",
++  "parentRowSpace": 10,
++  "placement": "CENTER",
++  "recaptchaType": "V3",
++  "renderMode": "CANVAS",
++  "resetFormOnClick": false,
++  "responsiveBehavior": "hug",
++  "rightColumn": 64,
++  "text": "Upload Priority",
++  "topRow": 5,
++  "type": "BUTTON_WIDGET",
++  "version": 1,
++  "widgetId": "iyq8qlow4d",
++  "widgetName": "btn_upload"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/ctn_ruleForm/btn_newRule.json b/pages/Page1/widgets/Tabs1/ctn_ruleForm/btn_newRule.json
+new file mode 100644
+index 0000000..2384bc3
+--- /dev/null
++++ b/pages/Page1/widgets/Tabs1/ctn_ruleForm/btn_newRule.json
+@@ -0,0 +1,50 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 4,
++  "boxShadow": "none",
++  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "buttonVariant": "SECONDARY",
++  "disabledWhenInvalid": false,
++  "dynamicBindingPathList": [
++    {
++      "key": "buttonColor"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicTriggerPathList": [
++    {
++      "key": "onClick"
++    }
++  ],
++  "isDefaultClickDisabled": true,
++  "isDisabled": false,
++  "isLoading": false,
++  "isVisible": true,
++  "key": "3su66kmj3f",
++  "leftColumn": 52,
++  "minWidth": 120,
++  "mobileBottomRow": 4,
++  "mobileLeftColumn": 52,
++  "mobileRightColumn": 64,
++  "mobileTopRow": 0,
++  "needsErrorInfo": false,
++  "onClick": "{{MockApi.newRule()}}",
++  "parentColumnSpace": 19.9375,
++  "parentId": "oz09wt528w",
++  "parentRowSpace": 10,
++  "placement": "CENTER",
++  "recaptchaType": "V3",
++  "renderMode": "CANVAS",
++  "resetFormOnClick": false,
++  "responsiveBehavior": "hug",
++  "rightColumn": 64,
++  "text": "New rule",
++  "topRow": 0,
++  "type": "BUTTON_WIDGET",
++  "version": 1,
++  "widgetId": "8vdsuu0evi",
++  "widgetName": "btn_newRule"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/ctn_ruleForm/btn_pickRule.json b/pages/Page1/widgets/Tabs1/ctn_ruleForm/btn_pickRule.json
+new file mode 100644
+index 0000000..05ed836
+--- /dev/null
++++ b/pages/Page1/widgets/Tabs1/ctn_ruleForm/btn_pickRule.json
+@@ -0,0 +1,50 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 12,
++  "boxShadow": "none",
++  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "buttonVariant": "SECONDARY",
++  "disabledWhenInvalid": false,
++  "dynamicBindingPathList": [
++    {
++      "key": "buttonColor"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicTriggerPathList": [
++    {
++      "key": "onClick"
++    }
++  ],
++  "isDefaultClickDisabled": true,
++  "isDisabled": false,
++  "isLoading": false,
++  "isVisible": true,
++  "key": "kzgchrjxeq",
++  "leftColumn": 41,
++  "minWidth": 120,
++  "mobileBottomRow": 12,
++  "mobileLeftColumn": 41,
++  "mobileRightColumn": 52,
++  "mobileTopRow": 8,
++  "needsErrorInfo": false,
++  "onClick": "{{resetWidget('tbl_ruleLookup', true).then(() => showModal('mdl_ruleLookup'))}}",
++  "parentColumnSpace": 19.9375,
++  "parentId": "oz09wt528w",
++  "parentRowSpace": 10,
++  "placement": "CENTER",
++  "recaptchaType": "V3",
++  "renderMode": "CANVAS",
++  "resetFormOnClick": false,
++  "responsiveBehavior": "hug",
++  "rightColumn": 52,
++  "text": "Select rule...",
++  "topRow": 8,
++  "type": "BUTTON_WIDGET",
++  "version": 1,
++  "widgetId": "ryuz11newu",
++  "widgetName": "btn_pickRule"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/ctn_ruleForm/btn_ruleCancel.json b/pages/Page1/widgets/Tabs1/ctn_ruleForm/btn_ruleCancel.json
+new file mode 100644
+index 0000000..fdb5a72
+--- /dev/null
++++ b/pages/Page1/widgets/Tabs1/ctn_ruleForm/btn_ruleCancel.json
+@@ -0,0 +1,50 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 54,
++  "boxShadow": "none",
++  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "buttonVariant": "TERTIARY",
++  "disabledWhenInvalid": false,
++  "dynamicBindingPathList": [
++    {
++      "key": "buttonColor"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicTriggerPathList": [
++    {
++      "key": "onClick"
++    }
++  ],
++  "isDefaultClickDisabled": true,
++  "isDisabled": false,
++  "isLoading": false,
++  "isVisible": true,
++  "key": "c6l9rodv6i",
++  "leftColumn": 40,
++  "minWidth": 120,
++  "mobileBottomRow": 54,
++  "mobileLeftColumn": 40,
++  "mobileRightColumn": 51,
++  "mobileTopRow": 50,
++  "needsErrorInfo": false,
++  "onClick": "{{MockApi.rule.VERSION ? MockApi.pickRule(MockApi.rule) : MockApi.newRule()}}",
++  "parentColumnSpace": 19.9375,
++  "parentId": "oz09wt528w",
++  "parentRowSpace": 10,
++  "placement": "CENTER",
++  "recaptchaType": "V3",
++  "renderMode": "CANVAS",
++  "resetFormOnClick": false,
++  "responsiveBehavior": "hug",
++  "rightColumn": 51,
++  "text": "Cancel",
++  "topRow": 50,
++  "type": "BUTTON_WIDGET",
++  "version": 1,
++  "widgetId": "fe8svnv328",
++  "widgetName": "btn_ruleCancel"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/ctn_ruleForm/btn_ruleConfirm.json b/pages/Page1/widgets/Tabs1/ctn_ruleForm/btn_ruleConfirm.json
+new file mode 100644
+index 0000000..fbf72a1
+--- /dev/null
++++ b/pages/Page1/widgets/Tabs1/ctn_ruleForm/btn_ruleConfirm.json
+@@ -0,0 +1,50 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 54,
++  "boxShadow": "none",
++  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "buttonVariant": "PRIMARY",
++  "disabledWhenInvalid": false,
++  "dynamicBindingPathList": [
++    {
++      "key": "buttonColor"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicTriggerPathList": [
++    {
++      "key": "onClick"
++    }
++  ],
++  "isDefaultClickDisabled": true,
++  "isDisabled": false,
++  "isLoading": false,
++  "isVisible": true,
++  "key": "geoy1akocz",
++  "leftColumn": 52,
++  "minWidth": 120,
++  "mobileBottomRow": 54,
++  "mobileLeftColumn": 52,
++  "mobileRightColumn": 64,
++  "mobileTopRow": 50,
++  "needsErrorInfo": false,
++  "onClick": "{{MockApi.confirmRule({ TECH: sel_ruleTech.selectedOptionValue, RULE_ID: inp_ruleId.text, SQL_COMMAND: inp_sqlCommand.text, EXTERNAL_PRIORITY: inp_extPriority.text, ACTIVE: sw_active.isSwitchedOn, RULE_PERIOD: inp_rulePeriod.text, RULE_PRIORITY: inp_rulePriority.text, RULE_EXPIRY_DATE: dp_ruleExpiry.formattedDate })}}",
++  "parentColumnSpace": 19.9375,
++  "parentId": "oz09wt528w",
++  "parentRowSpace": 10,
++  "placement": "CENTER",
++  "recaptchaType": "V3",
++  "renderMode": "CANVAS",
++  "resetFormOnClick": false,
++  "responsiveBehavior": "hug",
++  "rightColumn": 64,
++  "text": "Confirm",
++  "topRow": 50,
++  "type": "BUTTON_WIDGET",
++  "version": 1,
++  "widgetId": "v4qi7xpwqj",
++  "widgetName": "btn_ruleConfirm"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/ctn_ruleForm/btn_testSql.json b/pages/Page1/widgets/Tabs1/ctn_ruleForm/btn_testSql.json
+new file mode 100644
+index 0000000..18fbd1e
+--- /dev/null
++++ b/pages/Page1/widgets/Tabs1/ctn_ruleForm/btn_testSql.json
+@@ -0,0 +1,50 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 54,
++  "boxShadow": "none",
++  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "buttonVariant": "SECONDARY",
++  "disabledWhenInvalid": false,
++  "dynamicBindingPathList": [
++    {
++      "key": "buttonColor"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicTriggerPathList": [
++    {
++      "key": "onClick"
++    }
++  ],
++  "isDefaultClickDisabled": true,
++  "isDisabled": false,
++  "isLoading": false,
++  "isVisible": true,
++  "key": "987cxe1d0z",
++  "leftColumn": 0,
++  "minWidth": 120,
++  "mobileBottomRow": 54,
++  "mobileLeftColumn": 0,
++  "mobileRightColumn": 12,
++  "mobileTopRow": 50,
++  "needsErrorInfo": false,
++  "onClick": "{{MockApi.testSql(inp_sqlCommand.text)}}",
++  "parentColumnSpace": 19.9375,
++  "parentId": "oz09wt528w",
++  "parentRowSpace": 10,
++  "placement": "CENTER",
++  "recaptchaType": "V3",
++  "renderMode": "CANVAS",
++  "resetFormOnClick": false,
++  "responsiveBehavior": "hug",
++  "rightColumn": 12,
++  "text": "Test SQL",
++  "topRow": 50,
++  "type": "BUTTON_WIDGET",
++  "version": 1,
++  "widgetId": "rln6maei6j",
++  "widgetName": "btn_testSql"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/Container3/Container3.json b/pages/Page1/widgets/Tabs1/ctn_ruleForm/ctn_ruleForm.json
+similarity index 63%
+rename from pages/Page1/widgets/Tabs1/Container3/Container3.json
+rename to pages/Page1/widgets/Tabs1/ctn_ruleForm/ctn_ruleForm.json
+index 6a2bd05..f0b0a85 100644
+--- a/pages/Page1/widgets/Tabs1/Container3/Container3.json
++++ b/pages/Page1/widgets/Tabs1/ctn_ruleForm/ctn_ruleForm.json
+@@ -4,50 +4,41 @@
+   "borderColor": "#E0DEDE",
+   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+   "borderWidth": "1",
+-  "bottomRow": 70,
++  "bottomRow": 58,
+   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+   "children": [
+     {
+-      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-      "bottomRow": 700,
+-      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
++      "bottomRow": 580,
+       "canExtend": false,
+       "containerStyle": "none",
+       "detachFromLayout": true,
+-      "dynamicBindingPathList": [
+-        {
+-          "key": "borderRadius"
+-        },
+-        {
+-          "key": "boxShadow"
+-        }
+-      ],
+-      "dynamicHeight": "AUTO_HEIGHT",
++      "dynamicBindingPathList": [],
++      "dynamicTriggerPathList": [],
+       "flexLayers": [],
++      "isDisabled": false,
+       "isLoading": false,
+       "isVisible": true,
+-      "key": "jyvbcodhbr",
++      "key": "hca6fnzlmd",
+       "leftColumn": 0,
+-      "maxDynamicHeight": 9000,
+-      "minDynamicHeight": 4,
+-      "minHeight": 100,
++      "minHeight": 580,
+       "minWidth": 450,
+-      "mobileBottomRow": 100,
++      "mobileBottomRow": 580,
+       "mobileLeftColumn": 0,
+-      "mobileRightColumn": 478.5,
++      "mobileRightColumn": 1000,
+       "mobileTopRow": 0,
+       "needsErrorInfo": false,
+       "parentColumnSpace": 1,
+-      "parentId": "b23r31h9u9",
++      "parentId": "djn19sw3th",
+       "parentRowSpace": 1,
+       "renderMode": "CANVAS",
+       "responsiveBehavior": "fill",
+-      "rightColumn": 478.5,
++      "rightColumn": 1000,
++      "shouldScrollContents": false,
+       "topRow": 0,
+       "type": "CANVAS_WIDGET",
+       "version": 1,
+-      "widgetId": "x31wyhx83e",
+-      "widgetName": "Canvas5"
++      "widgetId": "oz09wt528w",
++      "widgetName": "cnv_ctn_ruleForm"
+     }
+   ],
+   "containerStyle": "card",
+@@ -59,22 +50,24 @@
+       "key": "boxShadow"
+     }
+   ],
+-  "dynamicHeight": "FIXED",
++  "dynamicHeight": "AUTO_HEIGHT",
+   "dynamicTriggerPathList": [],
+   "flexVerticalAlignment": "stretch",
+   "isCanvas": true,
+   "isLoading": false,
+   "isVisible": true,
+-  "key": "7u2pg367s6",
++  "key": "v5dpgvapge",
+   "leftColumn": 0,
+   "maxDynamicHeight": 9000,
+   "minDynamicHeight": 10,
+   "minWidth": 450,
+-  "mobileBottomRow": 10,
++  "mobileBottomRow": 58,
+   "mobileLeftColumn": 0,
+-  "mobileRightColumn": 24,
++  "mobileRightColumn": 64,
+   "mobileTopRow": 0,
+   "needsErrorInfo": false,
++  "originalBottomRow": 58,
++  "originalTopRow": 0,
+   "parentColumnSpace": 19.9375,
+   "parentId": "nh0y08yy17",
+   "parentRowSpace": 10,
+@@ -85,6 +78,6 @@
+   "topRow": 0,
+   "type": "CONTAINER_WIDGET",
+   "version": 1,
+-  "widgetId": "b23r31h9u9",
+-  "widgetName": "Container3"
++  "widgetId": "djn19sw3th",
++  "widgetName": "ctn_ruleForm"
+ }
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/ctn_ruleForm/dp_ruleExpiry.json b/pages/Page1/widgets/Tabs1/ctn_ruleForm/dp_ruleExpiry.json
+new file mode 100644
+index 0000000..dcd6176
+--- /dev/null
++++ b/pages/Page1/widgets/Tabs1/ctn_ruleForm/dp_ruleExpiry.json
+@@ -0,0 +1,59 @@
++{
++  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 41,
++  "boxShadow": "none",
++  "closeOnSelection": true,
++  "dateFormat": "YYYY-MM-DD",
++  "datePickerType": "DATE_PICKER",
++  "defaultDate": "{{MockApi.rule.RULE_EXPIRY_DATE ? moment(MockApi.rule.RULE_EXPIRY_DATE).toISOString() : ''}}",
++  "dynamicBindingPathList": [
++    {
++      "key": "defaultDate"
++    },
++    {
++      "key": "accentColor"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "FIXED",
++  "dynamicTriggerPathList": [],
++  "firstDayOfWeek": 1,
++  "isDisabled": false,
++  "isLoading": false,
++  "isRequired": false,
++  "isVisible": true,
++  "key": "x07ao7bt5q",
++  "label": "Rule expiry date",
++  "labelAlignment": "left",
++  "labelPosition": "Top",
++  "labelTextSize": "0.875rem",
++  "labelWidth": 5,
++  "leftColumn": 48,
++  "maxDate": "2121-12-31T18:29:00.000Z",
++  "maxDynamicHeight": 9000,
++  "minDate": "1920-12-31T18:30:00.000Z",
++  "minDynamicHeight": 4,
++  "minWidth": 450,
++  "mobileBottomRow": 41,
++  "mobileLeftColumn": 48,
++  "mobileRightColumn": 64,
++  "mobileTopRow": 34,
++  "needsErrorInfo": false,
++  "parentColumnSpace": 19.9375,
++  "parentId": "oz09wt528w",
++  "parentRowSpace": 10,
++  "renderMode": "CANVAS",
++  "responsiveBehavior": "fill",
++  "rightColumn": 64,
++  "shortcuts": false,
++  "timePrecision": "None",
++  "topRow": 34,
++  "type": "DATE_PICKER_WIDGET2",
++  "version": 2,
++  "widgetId": "d0xougfqpx",
++  "widgetName": "dp_ruleExpiry"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/Container3/Input1.json b/pages/Page1/widgets/Tabs1/ctn_ruleForm/inp_extPriority.json
+similarity index 62%
+rename from pages/Page1/widgets/Tabs1/Container3/Input1.json
+rename to pages/Page1/widgets/Tabs1/ctn_ruleForm/inp_extPriority.json
+index 5575262..5d99077 100644
+--- a/pages/Page1/widgets/Tabs1/Container3/Input1.json
++++ b/pages/Page1/widgets/Tabs1/ctn_ruleForm/inp_extPriority.json
+@@ -3,10 +3,13 @@
+   "animateLoading": true,
+   "autoFocus": false,
+   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-  "bottomRow": 18,
++  "bottomRow": 41,
+   "boxShadow": "none",
+-  "defaultText": "",
++  "defaultText": "{{MockApi.rule.EXTERNAL_PRIORITY}}",
+   "dynamicBindingPathList": [
++    {
++      "key": "defaultText"
++    },
+     {
+       "key": "accentColor"
+     },
+@@ -17,13 +20,13 @@
+   "dynamicHeight": "AUTO_HEIGHT",
+   "dynamicTriggerPathList": [],
+   "iconAlign": "left",
+-  "inputType": "MULTI_LINE_TEXT",
++  "inputType": "NUMBER",
+   "isDisabled": false,
+   "isLoading": false,
+-  "isRequired": false,
++  "isRequired": true,
+   "isVisible": true,
+-  "key": "l0y67mnfpz",
+-  "label": "Label",
++  "key": "wvilxvmzlw",
++  "label": "External priority",
+   "labelAlignment": "left",
+   "labelPosition": "Top",
+   "labelStyle": "",
+@@ -33,25 +36,26 @@
+   "maxDynamicHeight": 9000,
+   "minDynamicHeight": 4,
+   "minWidth": 450,
+-  "mobileBottomRow": 15,
++  "mobileBottomRow": 41,
+   "mobileLeftColumn": 0,
+-  "mobileRightColumn": 20,
+-  "mobileTopRow": 8,
++  "mobileRightColumn": 15,
++  "mobileTopRow": 34,
+   "needsErrorInfo": false,
+-  "originalBottomRow": 15,
+-  "originalTopRow": 8,
+-  "parentColumnSpace": 19.625,
+-  "parentId": "x31wyhx83e",
++  "originalBottomRow": 41,
++  "originalTopRow": 34,
++  "parentColumnSpace": 19.9375,
++  "parentId": "oz09wt528w",
+   "parentRowSpace": 10,
++  "placeholderText": "",
+   "renderMode": "CANVAS",
+-  "resetOnSubmit": true,
++  "resetOnSubmit": false,
+   "responsiveBehavior": "fill",
+-  "rightColumn": 64,
++  "rightColumn": 15,
+   "shouldAllowAutofill": false,
+   "showStepArrows": false,
+-  "topRow": 8,
++  "topRow": 34,
+   "type": "INPUT_WIDGET_V2",
+   "version": 2,
+-  "widgetId": "o80ddn88k3",
+-  "widgetName": "Input1"
++  "widgetId": "j0a3j3ch1r",
++  "widgetName": "inp_extPriority"
+ }
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/ctn_ruleForm/inp_ruleId.json b/pages/Page1/widgets/Tabs1/ctn_ruleForm/inp_ruleId.json
+new file mode 100644
+index 0000000..0f3fcee
+--- /dev/null
++++ b/pages/Page1/widgets/Tabs1/ctn_ruleForm/inp_ruleId.json
+@@ -0,0 +1,64 @@
++{
++  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
++  "animateLoading": true,
++  "autoFocus": false,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 12,
++  "boxShadow": "none",
++  "defaultText": "{{MockApi.rule.RULE_ID}}",
++  "dynamicBindingPathList": [
++    {
++      "key": "defaultText"
++    },
++    {
++      "key": "isDisabled"
++    },
++    {
++      "key": "accentColor"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "AUTO_HEIGHT",
++  "dynamicTriggerPathList": [],
++  "iconAlign": "left",
++  "inputType": "TEXT",
++  "isDisabled": "{{MockApi.ruleMode === 'EDIT'}}",
++  "isLoading": false,
++  "isRequired": true,
++  "isVisible": true,
++  "key": "o3cdrl101f",
++  "label": "Rule ID",
++  "labelAlignment": "left",
++  "labelPosition": "Top",
++  "labelStyle": "",
++  "labelTextSize": "0.875rem",
++  "labelWidth": 5,
++  "leftColumn": 15,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 4,
++  "minWidth": 450,
++  "mobileBottomRow": 12,
++  "mobileLeftColumn": 15,
++  "mobileRightColumn": 40,
++  "mobileTopRow": 5,
++  "needsErrorInfo": false,
++  "originalBottomRow": 12,
++  "originalTopRow": 5,
++  "parentColumnSpace": 19.9375,
++  "parentId": "oz09wt528w",
++  "parentRowSpace": 10,
++  "placeholderText": "e.g. HOT_LOT_LOGIC",
++  "renderMode": "CANVAS",
++  "resetOnSubmit": false,
++  "responsiveBehavior": "fill",
++  "rightColumn": 40,
++  "shouldAllowAutofill": false,
++  "showStepArrows": false,
++  "topRow": 5,
++  "type": "INPUT_WIDGET_V2",
++  "version": 2,
++  "widgetId": "z5x7hcr32e",
++  "widgetName": "inp_ruleId"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/ctn_ruleForm/inp_rulePeriod.json b/pages/Page1/widgets/Tabs1/ctn_ruleForm/inp_rulePeriod.json
+new file mode 100644
+index 0000000..ff5467e
+--- /dev/null
++++ b/pages/Page1/widgets/Tabs1/ctn_ruleForm/inp_rulePeriod.json
+@@ -0,0 +1,61 @@
++{
++  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
++  "animateLoading": true,
++  "autoFocus": false,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 41,
++  "boxShadow": "none",
++  "defaultText": "{{MockApi.rule.RULE_PERIOD}}",
++  "dynamicBindingPathList": [
++    {
++      "key": "defaultText"
++    },
++    {
++      "key": "accentColor"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "AUTO_HEIGHT",
++  "dynamicTriggerPathList": [],
++  "iconAlign": "left",
++  "inputType": "NUMBER",
++  "isDisabled": false,
++  "isLoading": false,
++  "isRequired": true,
++  "isVisible": true,
++  "key": "weyjlmbwa4",
++  "label": "Rule period (min)",
++  "labelAlignment": "left",
++  "labelPosition": "Top",
++  "labelStyle": "",
++  "labelTextSize": "0.875rem",
++  "labelWidth": 5,
++  "leftColumn": 16,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 4,
++  "minWidth": 450,
++  "mobileBottomRow": 41,
++  "mobileLeftColumn": 16,
++  "mobileRightColumn": 31,
++  "mobileTopRow": 34,
++  "needsErrorInfo": false,
++  "originalBottomRow": 41,
++  "originalTopRow": 34,
++  "parentColumnSpace": 19.9375,
++  "parentId": "oz09wt528w",
++  "parentRowSpace": 10,
++  "placeholderText": "",
++  "renderMode": "CANVAS",
++  "resetOnSubmit": false,
++  "responsiveBehavior": "fill",
++  "rightColumn": 31,
++  "shouldAllowAutofill": false,
++  "showStepArrows": false,
++  "topRow": 34,
++  "type": "INPUT_WIDGET_V2",
++  "version": 2,
++  "widgetId": "4mk57xs5mh",
++  "widgetName": "inp_rulePeriod"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/ctn_ruleForm/inp_rulePriority.json b/pages/Page1/widgets/Tabs1/ctn_ruleForm/inp_rulePriority.json
+new file mode 100644
+index 0000000..985b1bb
+--- /dev/null
++++ b/pages/Page1/widgets/Tabs1/ctn_ruleForm/inp_rulePriority.json
+@@ -0,0 +1,61 @@
++{
++  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
++  "animateLoading": true,
++  "autoFocus": false,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 41,
++  "boxShadow": "none",
++  "defaultText": "{{MockApi.rule.RULE_PRIORITY}}",
++  "dynamicBindingPathList": [
++    {
++      "key": "defaultText"
++    },
++    {
++      "key": "accentColor"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "AUTO_HEIGHT",
++  "dynamicTriggerPathList": [],
++  "iconAlign": "left",
++  "inputType": "NUMBER",
++  "isDisabled": false,
++  "isLoading": false,
++  "isRequired": true,
++  "isVisible": true,
++  "key": "jbvoebvqk4",
++  "label": "Rule priority",
++  "labelAlignment": "left",
++  "labelPosition": "Top",
++  "labelStyle": "",
++  "labelTextSize": "0.875rem",
++  "labelWidth": 5,
++  "leftColumn": 32,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 4,
++  "minWidth": 450,
++  "mobileBottomRow": 41,
++  "mobileLeftColumn": 32,
++  "mobileRightColumn": 47,
++  "mobileTopRow": 34,
++  "needsErrorInfo": false,
++  "originalBottomRow": 41,
++  "originalTopRow": 34,
++  "parentColumnSpace": 19.9375,
++  "parentId": "oz09wt528w",
++  "parentRowSpace": 10,
++  "placeholderText": "",
++  "renderMode": "CANVAS",
++  "resetOnSubmit": false,
++  "responsiveBehavior": "fill",
++  "rightColumn": 47,
++  "shouldAllowAutofill": false,
++  "showStepArrows": false,
++  "topRow": 34,
++  "type": "INPUT_WIDGET_V2",
++  "version": 2,
++  "widgetId": "ztsj1g51qj",
++  "widgetName": "inp_rulePriority"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/ctn_ruleForm/inp_sqlCommand.json b/pages/Page1/widgets/Tabs1/ctn_ruleForm/inp_sqlCommand.json
+new file mode 100644
+index 0000000..b36574c
+--- /dev/null
++++ b/pages/Page1/widgets/Tabs1/ctn_ruleForm/inp_sqlCommand.json
+@@ -0,0 +1,61 @@
++{
++  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
++  "animateLoading": true,
++  "autoFocus": false,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 33,
++  "boxShadow": "none",
++  "defaultText": "{{MockApi.rule.SQL_COMMAND}}",
++  "dynamicBindingPathList": [
++    {
++      "key": "defaultText"
++    },
++    {
++      "key": "accentColor"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "FIXED",
++  "dynamicTriggerPathList": [],
++  "iconAlign": "left",
++  "inputType": "MULTI_LINE_TEXT",
++  "isDisabled": false,
++  "isLoading": false,
++  "isRequired": true,
++  "isVisible": true,
++  "key": "j6sj43mist",
++  "label": "SQL command (SELECT / WITH only)",
++  "labelAlignment": "left",
++  "labelPosition": "Top",
++  "labelStyle": "",
++  "labelTextSize": "0.875rem",
++  "labelWidth": 5,
++  "leftColumn": 0,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 4,
++  "minWidth": 450,
++  "mobileBottomRow": 33,
++  "mobileLeftColumn": 0,
++  "mobileRightColumn": 64,
++  "mobileTopRow": 13,
++  "needsErrorInfo": false,
++  "originalBottomRow": 33,
++  "originalTopRow": 13,
++  "parentColumnSpace": 19.9375,
++  "parentId": "oz09wt528w",
++  "parentRowSpace": 10,
++  "placeholderText": "WITH ... SELECT LOT_ID FROM ...",
++  "renderMode": "CANVAS",
++  "resetOnSubmit": false,
++  "responsiveBehavior": "fill",
++  "rightColumn": 64,
++  "shouldAllowAutofill": false,
++  "showStepArrows": false,
++  "topRow": 13,
++  "type": "INPUT_WIDGET_V2",
++  "version": 2,
++  "widgetId": "rd4sm7lahi",
++  "widgetName": "inp_sqlCommand"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/Container3/Select2.json b/pages/Page1/widgets/Tabs1/ctn_ruleForm/sel_ruleTech.json
+similarity index 58%
+rename from pages/Page1/widgets/Tabs1/Container3/Select2.json
+rename to pages/Page1/widgets/Tabs1/ctn_ruleForm/sel_ruleTech.json
+index 00b65dc..ff8a013 100644
+--- a/pages/Page1/widgets/Tabs1/Container3/Select2.json
++++ b/pages/Page1/widgets/Tabs1/ctn_ruleForm/sel_ruleTech.json
+@@ -2,10 +2,16 @@
+   "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+   "animateLoading": true,
+   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-  "bottomRow": 7,
++  "bottomRow": 12,
+   "boxShadow": "none",
+-  "defaultOptionValue": "GREEN",
++  "defaultOptionValue": "{{MockApi.rule.TECH}}",
+   "dynamicBindingPathList": [
++    {
++      "key": "sourceData"
++    },
++    {
++      "key": "defaultOptionValue"
++    },
+     {
+       "key": "accentColor"
+     },
+@@ -19,40 +25,41 @@
+       "key": "sourceData"
+     }
+   ],
++  "dynamicTriggerPathList": [],
+   "isDisabled": false,
+   "isFilterable": true,
+   "isLoading": false,
+-  "isRequired": false,
++  "isRequired": true,
+   "isVisible": true,
+-  "key": "pnfm773gbl",
++  "key": "wzjga9ff24",
+   "labelAlignment": "left",
+   "labelPosition": "Top",
+-  "labelText": "Label",
++  "labelText": "Tech",
+   "labelTextSize": "0.875rem",
+   "labelWidth": 5,
+   "leftColumn": 0,
+   "maxDynamicHeight": 9000,
+   "minDynamicHeight": 4,
+   "minWidth": 450,
+-  "mobileBottomRow": 7,
++  "mobileBottomRow": 12,
+   "mobileLeftColumn": 0,
+-  "mobileRightColumn": 20,
+-  "mobileTopRow": 0,
++  "mobileRightColumn": 14,
++  "mobileTopRow": 5,
+   "needsErrorInfo": false,
+-  "optionLabel": "name",
+-  "optionValue": "code",
+-  "parentColumnSpace": 19.625,
+-  "parentId": "x31wyhx83e",
++  "optionLabel": "label",
++  "optionValue": "value",
++  "parentColumnSpace": 19.9375,
++  "parentId": "oz09wt528w",
+   "parentRowSpace": 10,
+-  "placeholderText": "Select option",
++  "placeholderText": "Select",
+   "renderMode": "CANVAS",
+   "responsiveBehavior": "fill",
+-  "rightColumn": 20,
++  "rightColumn": 14,
+   "serverSideFiltering": false,
+-  "sourceData": "[\n  {\n    \"name\": \"Blue\",\n    \"code\": \"BLUE\"\n  },\n  {\n    \"name\": \"Green\",\n    \"code\": \"GREEN\"\n  },\n  {\n    \"name\": \"Red\",\n    \"code\": \"RED\"\n  }\n]",
+-  "topRow": 0,
++  "sourceData": "{{MockApi.lookupsData.TECH}}",
++  "topRow": 5,
+   "type": "SELECT_WIDGET",
+   "version": 1,
+-  "widgetId": "2719xu6c9j",
+-  "widgetName": "Select2"
++  "widgetId": "hoqs2hcxzo",
++  "widgetName": "sel_ruleTech"
+ }
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/ctn_ruleForm/sw_active.json b/pages/Page1/widgets/Tabs1/ctn_ruleForm/sw_active.json
+new file mode 100644
+index 0000000..239d6b3
+--- /dev/null
++++ b/pages/Page1/widgets/Tabs1/ctn_ruleForm/sw_active.json
+@@ -0,0 +1,49 @@
++{
++  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
++  "alignWidget": "LEFT",
++  "animateLoading": true,
++  "bottomRow": 47,
++  "boxShadow": "none",
++  "defaultSwitchState": "{{MockApi.rule.ACTIVE}}",
++  "dynamicBindingPathList": [
++    {
++      "key": "defaultSwitchState"
++    },
++    {
++      "key": "accentColor"
++    }
++  ],
++  "dynamicHeight": "AUTO_HEIGHT",
++  "dynamicPropertyPathList": [
++    {
++      "key": "defaultSwitchState"
++    }
++  ],
++  "dynamicTriggerPathList": [],
++  "isDisabled": false,
++  "isLoading": false,
++  "isVisible": true,
++  "key": "ij91251bhu",
++  "label": "Active",
++  "labelPosition": "Left",
++  "leftColumn": 0,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 4,
++  "minWidth": 450,
++  "mobileBottomRow": 47,
++  "mobileLeftColumn": 0,
++  "mobileRightColumn": 15,
++  "mobileTopRow": 43,
++  "needsErrorInfo": false,
++  "parentColumnSpace": 19.9375,
++  "parentId": "oz09wt528w",
++  "parentRowSpace": 10,
++  "renderMode": "CANVAS",
++  "responsiveBehavior": "fill",
++  "rightColumn": 15,
++  "topRow": 43,
++  "type": "SWITCH_WIDGET",
++  "version": 1,
++  "widgetId": "o2kjbu2gpp",
++  "widgetName": "sw_active"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/ctn_ruleForm/txt_ruleMode.json b/pages/Page1/widgets/Tabs1/ctn_ruleForm/txt_ruleMode.json
+new file mode 100644
+index 0000000..0267579
+--- /dev/null
++++ b/pages/Page1/widgets/Tabs1/ctn_ruleForm/txt_ruleMode.json
+@@ -0,0 +1,55 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 4,
++  "dynamicBindingPathList": [
++    {
++      "key": "text"
++    },
++    {
++      "key": "truncateButtonColor"
++    },
++    {
++      "key": "fontFamily"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "AUTO_HEIGHT",
++  "dynamicTriggerPathList": [],
++  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
++  "fontSize": "1.125rem",
++  "fontStyle": "BOLD",
++  "isLoading": false,
++  "isVisible": true,
++  "key": "30f667n62v",
++  "leftColumn": 0,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 4,
++  "minWidth": 450,
++  "mobileBottomRow": 4,
++  "mobileLeftColumn": 0,
++  "mobileRightColumn": 44,
++  "mobileTopRow": 0,
++  "needsErrorInfo": false,
++  "originalBottomRow": 4,
++  "originalTopRow": 0,
++  "overflow": "NONE",
++  "parentColumnSpace": 19.9375,
++  "parentId": "oz09wt528w",
++  "parentRowSpace": 10,
++  "renderMode": "CANVAS",
++  "responsiveBehavior": "fill",
++  "rightColumn": 44,
++  "shouldTruncate": false,
++  "text": "{{MockApi.ruleMode === 'EDIT' ? 'Editing rule ' + MockApi.rule.RULE_ID + ' (version ' + MockApi.rule.VERSION + ', last changed by ' + MockApi.rule.UPDATED_BY + ')' : 'New rule'}}",
++  "textAlign": "LEFT",
++  "textColor": "#231F20",
++  "topRow": 0,
++  "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "type": "TEXT_WIDGET",
++  "version": 1,
++  "widgetId": "29du9i89al",
++  "widgetName": "txt_ruleMode"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/Container4/FilePicker1.json b/pages/Page1/widgets/Tabs1/fp_upload.json
+similarity index 50%
+rename from pages/Page1/widgets/Tabs1/Container4/FilePicker1.json
+rename to pages/Page1/widgets/Tabs1/fp_upload.json
+index 94387b9..991323b 100644
+--- a/pages/Page1/widgets/Tabs1/Container4/FilePicker1.json
++++ b/pages/Page1/widgets/Tabs1/fp_upload.json
+@@ -1,11 +1,18 @@
+ {
+-  "allowedFileTypes": [],
++  "allowedFileTypes": [
++    ".csv",
++    ".xlsx",
++    ".xls"
++  ],
+   "animateLoading": true,
+   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-  "bottomRow": 5,
++  "bottomRow": 9,
+   "boxShadow": "none",
+   "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+   "dynamicBindingPathList": [
++    {
++      "key": "isDisabled"
++    },
+     {
+       "key": "buttonColor"
+     },
+@@ -13,35 +20,41 @@
+       "key": "borderRadius"
+     }
+   ],
+-  "dynamicTyping": true,
+-  "fileDataType": "Base64",
++  "dynamicTriggerPathList": [
++    {
++      "key": "onFilesSelected"
++    }
++  ],
++  "dynamicTyping": false,
++  "fileDataType": "Array",
+   "files": [],
+   "isDefaultClickDisabled": true,
+-  "isDisabled": false,
++  "isDisabled": "{{!!MockApi.uploadStatus.BATCH_ID && MockApi.uploadStatus.STATUS !== 'DONE'}}",
+   "isLoading": false,
+   "isRequired": false,
+   "isVisible": true,
+-  "key": "8l0jg7pnrc",
+-  "label": "Select Files",
++  "key": "a3w3bvgkuv",
++  "label": "Load file",
+   "leftColumn": 0,
+   "maxFileSize": 5,
+   "maxNumFiles": 1,
+   "minWidth": 120,
+-  "mobileBottomRow": 5,
++  "mobileBottomRow": 9,
+   "mobileLeftColumn": 0,
+-  "mobileRightColumn": 16,
+-  "mobileTopRow": 1,
++  "mobileRightColumn": 14,
++  "mobileTopRow": 5,
+   "needsErrorInfo": false,
+-  "parentColumnSpace": 19.625,
+-  "parentId": "hc5j4sl8vw",
++  "onFilesSelected": "{{MockApi.loadFile(fp_upload.files[0])}}",
++  "parentColumnSpace": 19.9375,
++  "parentId": "5x9bg43q7v",
+   "parentRowSpace": 10,
+   "renderMode": "CANVAS",
+   "responsiveBehavior": "hug",
+-  "rightColumn": 16,
++  "rightColumn": 14,
+   "selectedFiles": [],
+-  "topRow": 1,
++  "topRow": 5,
+   "type": "FILE_PICKER_WIDGET_V2",
+   "version": 1,
+-  "widgetId": "z1pstawj2q",
+-  "widgetName": "FilePicker1"
++  "widgetId": "nqitty7wpd",
++  "widgetName": "fp_upload"
+ }
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/prg_upload.json b/pages/Page1/widgets/Tabs1/prg_upload.json
+new file mode 100644
+index 0000000..2569061
+--- /dev/null
++++ b/pages/Page1/widgets/Tabs1/prg_upload.json
+@@ -0,0 +1,49 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 14,
++  "counterClosewise": false,
++  "dynamicBindingPathList": [
++    {
++      "key": "isVisible"
++    },
++    {
++      "key": "progress"
++    },
++    {
++      "key": "fillColor"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicTriggerPathList": [],
++  "fillColor": "{{appsmith.theme.colors.primaryColor}}",
++  "isCanvas": false,
++  "isIndeterminate": false,
++  "isLoading": false,
++  "isVisible": "{{!!MockApi.uploadStatus.BATCH_ID}}",
++  "key": "ycgozc4imu",
++  "leftColumn": 42,
++  "minWidth": 450,
++  "mobileBottomRow": 14,
++  "mobileLeftColumn": 42,
++  "mobileRightColumn": 64,
++  "mobileTopRow": 10,
++  "needsErrorInfo": false,
++  "parentColumnSpace": 19.9375,
++  "parentId": "5x9bg43q7v",
++  "parentRowSpace": 10,
++  "progress": "{{MockApi.uploadStatus.PERCENT}}",
++  "progressType": "linear",
++  "renderMode": "CANVAS",
++  "responsiveBehavior": "fill",
++  "rightColumn": 64,
++  "showResult": true,
++  "steps": 1,
++  "topRow": 10,
++  "type": "PROGRESS_WIDGET",
++  "version": 1,
++  "widgetId": "rq4lpeuvuu",
++  "widgetName": "prg_upload"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/Container1/Select1.json b/pages/Page1/widgets/Tabs1/sel_ParamTable.json
+similarity index 55%
+rename from pages/Page1/widgets/Tabs1/Container1/Select1.json
+rename to pages/Page1/widgets/Tabs1/sel_ParamTable.json
+index d3f23a1..13b2001 100644
+--- a/pages/Page1/widgets/Tabs1/Container1/Select1.json
++++ b/pages/Page1/widgets/Tabs1/sel_ParamTable.json
+@@ -2,10 +2,16 @@
+   "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+   "animateLoading": true,
+   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+-  "bottomRow": 7,
++  "bottomRow": 8,
+   "boxShadow": "none",
+-  "defaultOptionValue": "GREEN",
++  "defaultOptionValue": "{{MockApi.currentTable}}",
+   "dynamicBindingPathList": [
++    {
++      "key": "sourceData"
++    },
++    {
++      "key": "defaultOptionValue"
++    },
+     {
+       "key": "accentColor"
+     },
+@@ -19,40 +25,46 @@
+       "key": "sourceData"
+     }
+   ],
++  "dynamicTriggerPathList": [
++    {
++      "key": "onOptionChange"
++    }
++  ],
+   "isDisabled": false,
+   "isFilterable": true,
+   "isLoading": false,
+   "isRequired": false,
+   "isVisible": true,
+-  "key": "pnfm773gbl",
++  "key": "cz7qfoumdg",
+   "labelAlignment": "left",
+   "labelPosition": "Top",
+-  "labelText": "Label",
++  "labelText": "Table",
+   "labelTextSize": "0.875rem",
+   "labelWidth": 5,
+   "leftColumn": 0,
+   "maxDynamicHeight": 9000,
+   "minDynamicHeight": 4,
+   "minWidth": 450,
+-  "mobileBottomRow": 7,
++  "mobileBottomRow": 8,
+   "mobileLeftColumn": 0,
+-  "mobileRightColumn": 20,
+-  "mobileTopRow": 0,
++  "mobileRightColumn": 16,
++  "mobileTopRow": 1,
+   "needsErrorInfo": false,
+-  "optionLabel": "name",
+-  "optionValue": "code",
+-  "parentColumnSpace": 19.625,
+-  "parentId": "w2x4u0f8js",
++  "onOptionChange": "{{MockApi.selectTable(sel_ParamTable.selectedOptionValue)}}",
++  "optionLabel": "label",
++  "optionValue": "value",
++  "parentColumnSpace": 19.9375,
++  "parentId": "mqzoeeffok",
+   "parentRowSpace": 10,
+-  "placeholderText": "Select option",
++  "placeholderText": "Select",
+   "renderMode": "CANVAS",
+   "responsiveBehavior": "fill",
+-  "rightColumn": 20,
++  "rightColumn": 16,
+   "serverSideFiltering": false,
+-  "sourceData": "[\n  {\n    \"name\": \"Blue\",\n    \"code\": \"BLUE\"\n  },\n  {\n    \"name\": \"Green\",\n    \"code\": \"GREEN\"\n  },\n  {\n    \"name\": \"Red\",\n    \"code\": \"RED\"\n  }\n]",
+-  "topRow": 0,
++  "sourceData": "{{MockApi.paramTables}}",
++  "topRow": 1,
+   "type": "SELECT_WIDGET",
+   "version": 1,
+-  "widgetId": "dkd6qkqk5r",
+-  "widgetName": "Select1"
++  "widgetId": "izu7j03es6",
++  "widgetName": "sel_ParamTable"
+ }
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/tbl_params.json b/pages/Page1/widgets/Tabs1/tbl_params.json
+new file mode 100644
+index 0000000..d6ffba7
+--- /dev/null
++++ b/pages/Page1/widgets/Tabs1/tbl_params.json
+@@ -0,0 +1,574 @@
++{
++  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
++  "animateLoading": true,
++  "borderColor": "#E0DEDE",
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "borderWidth": "1",
++  "bottomRow": 84,
++  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
++  "cachedTableData": {},
++  "canFreezeColumn": true,
++  "childStylesheet": {
++    "button": {
++      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++      "boxShadow": "none",
++      "buttonColor": "{{appsmith.theme.colors.primaryColor}}"
++    },
++    "editActions": {
++      "discardBorderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++      "discardButtonColor": "{{appsmith.theme.colors.primaryColor}}",
++      "saveBorderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++      "saveButtonColor": "{{appsmith.theme.colors.primaryColor}}"
++    },
++    "iconButton": {
++      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++      "boxShadow": "none",
++      "buttonColor": "{{appsmith.theme.colors.primaryColor}}"
++    },
++    "menuButton": {
++      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++      "boxShadow": "none",
++      "menuColor": "{{appsmith.theme.colors.primaryColor}}"
++    }
++  },
++  "columnOrder": [
++    "CHANGE",
++    "PARAM_ID",
++    "TECH",
++    "OPERATION_START",
++    "OPERATION_END",
++    "RULE_FORMULA",
++    "RANGE_FROM",
++    "RANGE_TO",
++    "PRIORITY_NUMBER",
++    "UPDATED_BY",
++    "UPDATED_TIME",
++    "VERSION"
++  ],
++  "columnUpdatedAt": 1791774681862,
++  "columnWidthMap": {
++    "CHANGE": 90,
++    "OPERATION_END": 150,
++    "OPERATION_START": 150,
++    "PARAM_ID": 150,
++    "PRIORITY_NUMBER": 120,
++    "RANGE_FROM": 120,
++    "RANGE_TO": 120,
++    "RULE_FORMULA": 150,
++    "TECH": 110,
++    "UPDATED_BY": 150,
++    "UPDATED_TIME": 150,
++    "VERSION": 150
++  },
++  "customIsLoading": false,
++  "customIsLoadingValue": "",
++  "defaultPageSize": 0,
++  "defaultSelectedRowIndex": -1,
++  "defaultSelectedRowIndices": [],
++  "delimiter": ",",
++  "dynamicBindingPathList": [
++    {
++      "key": "tableData"
++    },
++    {
++      "key": "accentColor"
++    },
++    {
++      "key": "borderRadius"
++    },
++    {
++      "key": "boxShadow"
++    },
++    {
++      "key": "primaryColumns.CHANGE.textColor"
++    },
++    {
++      "key": "primaryColumns.CHANGE.computedValue"
++    },
++    {
++      "key": "primaryColumns.PARAM_ID.computedValue"
++    },
++    {
++      "key": "primaryColumns.TECH.computedValue"
++    },
++    {
++      "key": "primaryColumns.OPERATION_START.computedValue"
++    },
++    {
++      "key": "primaryColumns.OPERATION_END.computedValue"
++    },
++    {
++      "key": "primaryColumns.RULE_FORMULA.computedValue"
++    },
++    {
++      "key": "primaryColumns.RANGE_FROM.computedValue"
++    },
++    {
++      "key": "primaryColumns.RANGE_TO.computedValue"
++    },
++    {
++      "key": "primaryColumns.PRIORITY_NUMBER.computedValue"
++    },
++    {
++      "key": "primaryColumns.UPDATED_BY.computedValue"
++    },
++    {
++      "key": "primaryColumns.UPDATED_TIME.computedValue"
++    },
++    {
++      "key": "primaryColumns.VERSION.computedValue"
++    }
++  ],
++  "dynamicPropertyPathList": [],
++  "dynamicTriggerPathList": [],
++  "enableClientSideSearch": true,
++  "endOfData": false,
++  "flexVerticalAlignment": "start",
++  "horizontalAlignment": "LEFT",
++  "inlineEditingSaveOption": "ROW_LEVEL",
++  "isLoading": false,
++  "isSortable": true,
++  "isVisible": true,
++  "isVisibleDownload": true,
++  "isVisibleFilters": true,
++  "isVisiblePagination": true,
++  "isVisibleSearch": true,
++  "key": "whqrhkehh2",
++  "label": "Data",
++  "leftColumn": 0,
++  "minWidth": 450,
++  "mobileBottomRow": 84,
++  "mobileLeftColumn": 0,
++  "mobileRightColumn": 64,
++  "mobileTopRow": 14,
++  "needsErrorInfo": false,
++  "originalBottomRow": 84,
++  "originalTopRow": 14,
++  "parentColumnSpace": 19.9375,
++  "parentId": "mqzoeeffok",
++  "parentRowSpace": 10,
++  "primaryColumnId": "PARAM_ID",
++  "primaryColumns": {
++    "CHANGE": {
++      "alias": "CHANGE",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "text",
++      "computedValue": "{{(() => { const tableData = tbl_params.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"CHANGE\"])) : currentRow[\"CHANGE\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "BOLD",
++      "horizontalAlignment": "LEFT",
++      "id": "CHANGE",
++      "index": 0,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "Change",
++      "notation": "standard",
++      "originalId": "CHANGE",
++      "sticky": "",
++      "textColor": "{{(() => { const tableData = tbl_params.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"CHANGE\"] === \"DELETE\" ? \"#B91C1C\" : currentRow[\"CHANGE\"] === \"ADD\" ? \"#15803D\" : \"#B45309\")) : currentRow[\"CHANGE\"] === \"DELETE\" ? \"#B91C1C\" : currentRow[\"CHANGE\"] === \"ADD\" ? \"#15803D\" : \"#B45309\" })()}}",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 90
++    },
++    "OPERATION_END": {
++      "alias": "OPERATION_END",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "text",
++      "computedValue": "{{(() => { const tableData = tbl_params.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"OPERATION_END\"])) : currentRow[\"OPERATION_END\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "OPERATION_END",
++      "index": 4,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "Operation end",
++      "notation": "standard",
++      "originalId": "OPERATION_END",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 150
++    },
++    "OPERATION_START": {
++      "alias": "OPERATION_START",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "text",
++      "computedValue": "{{(() => { const tableData = tbl_params.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"OPERATION_START\"])) : currentRow[\"OPERATION_START\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "OPERATION_START",
++      "index": 3,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "Operation start",
++      "notation": "standard",
++      "originalId": "OPERATION_START",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 150
++    },
++    "PARAM_ID": {
++      "alias": "PARAM_ID",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "text",
++      "computedValue": "{{(() => { const tableData = tbl_params.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"PARAM_ID\"])) : currentRow[\"PARAM_ID\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "PARAM_ID",
++      "index": 1,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": false,
++      "label": "PARAM_ID",
++      "notation": "standard",
++      "originalId": "PARAM_ID",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 150
++    },
++    "PRIORITY_NUMBER": {
++      "alias": "PRIORITY_NUMBER",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "text",
++      "computedValue": "{{(() => { const tableData = tbl_params.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"PRIORITY_NUMBER\"])) : currentRow[\"PRIORITY_NUMBER\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "PRIORITY_NUMBER",
++      "index": 8,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "Priority no.",
++      "notation": "standard",
++      "originalId": "PRIORITY_NUMBER",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 120
++    },
++    "RANGE_FROM": {
++      "alias": "RANGE_FROM",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "text",
++      "computedValue": "{{(() => { const tableData = tbl_params.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"RANGE_FROM\"])) : currentRow[\"RANGE_FROM\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "RANGE_FROM",
++      "index": 6,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "Range from",
++      "notation": "standard",
++      "originalId": "RANGE_FROM",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 120
++    },
++    "RANGE_TO": {
++      "alias": "RANGE_TO",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "text",
++      "computedValue": "{{(() => { const tableData = tbl_params.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"RANGE_TO\"])) : currentRow[\"RANGE_TO\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "RANGE_TO",
++      "index": 7,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "Range to",
++      "notation": "standard",
++      "originalId": "RANGE_TO",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 120
++    },
++    "RULE_FORMULA": {
++      "alias": "RULE_FORMULA",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "text",
++      "computedValue": "{{(() => { const tableData = tbl_params.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"RULE_FORMULA\"])) : currentRow[\"RULE_FORMULA\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "RULE_FORMULA",
++      "index": 5,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "Rule formula",
++      "notation": "standard",
++      "originalId": "RULE_FORMULA",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 150
++    },
++    "TECH": {
++      "alias": "TECH",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "text",
++      "computedValue": "{{(() => { const tableData = tbl_params.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"TECH\"])) : currentRow[\"TECH\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "TECH",
++      "index": 2,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "Tech",
++      "notation": "standard",
++      "originalId": "TECH",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 110
++    },
++    "UPDATED_BY": {
++      "alias": "UPDATED_BY",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "text",
++      "computedValue": "{{(() => { const tableData = tbl_params.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"UPDATED_BY\"])) : currentRow[\"UPDATED_BY\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "UPDATED_BY",
++      "index": 9,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": false,
++      "label": "Updated by",
++      "notation": "standard",
++      "originalId": "UPDATED_BY",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 150
++    },
++    "UPDATED_TIME": {
++      "alias": "UPDATED_TIME",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "text",
++      "computedValue": "{{(() => { const tableData = tbl_params.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"UPDATED_TIME\"])) : currentRow[\"UPDATED_TIME\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "UPDATED_TIME",
++      "index": 10,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": false,
++      "label": "Updated time",
++      "notation": "standard",
++      "originalId": "UPDATED_TIME",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 150
++    },
++    "VERSION": {
++      "alias": "VERSION",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "text",
++      "computedValue": "{{(() => { const tableData = tbl_params.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"VERSION\"])) : currentRow[\"VERSION\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "VERSION",
++      "index": 11,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": false,
++      "label": "VERSION",
++      "notation": "standard",
++      "originalId": "VERSION",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 150
++    }
++  },
++  "renderMode": "CANVAS",
++  "responsiveBehavior": "fill",
++  "rightColumn": 64,
++  "searchKey": "",
++  "tableData": "{{MockApi.paramRows}}",
++  "textSize": "0.875rem",
++  "topRow": 14,
++  "totalRecordsCount": 0,
++  "type": "TABLE_WIDGET_V2",
++  "version": 2,
++  "verticalAlignment": "CENTER",
++  "widgetId": "xks1nof6tv",
++  "widgetName": "tbl_params"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/tbl_upload.json b/pages/Page1/widgets/Tabs1/tbl_upload.json
+new file mode 100644
+index 0000000..5c323e8
+--- /dev/null
++++ b/pages/Page1/widgets/Tabs1/tbl_upload.json
+@@ -0,0 +1,461 @@
++{
++  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
++  "allowAddNewRow": "{{!MockApi.uploadStatus.BATCH_ID}}",
++  "animateLoading": true,
++  "borderColor": "#E0DEDE",
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "borderWidth": "1",
++  "bottomRow": 84,
++  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
++  "cachedTableData": {},
++  "canFreezeColumn": true,
++  "childStylesheet": {
++    "button": {
++      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++      "boxShadow": "none",
++      "buttonColor": "{{appsmith.theme.colors.primaryColor}}"
++    },
++    "editActions": {
++      "discardBorderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++      "discardButtonColor": "{{appsmith.theme.colors.primaryColor}}",
++      "saveBorderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++      "saveButtonColor": "{{appsmith.theme.colors.primaryColor}}"
++    },
++    "iconButton": {
++      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++      "boxShadow": "none",
++      "buttonColor": "{{appsmith.theme.colors.primaryColor}}"
++    },
++    "menuButton": {
++      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++      "boxShadow": "none",
++      "menuColor": "{{appsmith.theme.colors.primaryColor}}"
++    }
++  },
++  "columnOrder": [
++    "ROW_NO",
++    "TECH",
++    "LOT_ID",
++    "EXTERNAL_PRIORITY",
++    "STATUS",
++    "Remove",
++    "EditActions1"
++  ],
++  "columnUpdatedAt": 1791774681862,
++  "columnWidthMap": {
++    "EXTERNAL_PRIORITY": 150,
++    "EditActions1": 150,
++    "LOT_ID": 180,
++    "ROW_NO": 150,
++    "Remove": 90,
++    "STATUS": 320,
++    "TECH": 140
++  },
++  "customIsLoading": false,
++  "customIsLoadingValue": "",
++  "defaultNewRow": "{{ { TECH: 'LOGIC' } }}",
++  "defaultPageSize": 0,
++  "defaultSelectedRowIndex": -1,
++  "defaultSelectedRowIndices": [],
++  "delimiter": ",",
++  "dynamicBindingPathList": [
++    {
++      "key": "tableData"
++    },
++    {
++      "key": "accentColor"
++    },
++    {
++      "key": "borderRadius"
++    },
++    {
++      "key": "boxShadow"
++    },
++    {
++      "key": "allowAddNewRow"
++    },
++    {
++      "key": "defaultNewRow"
++    },
++    {
++      "key": "primaryColumns.ROW_NO.computedValue"
++    },
++    {
++      "key": "primaryColumns.TECH.isCellEditable"
++    },
++    {
++      "key": "primaryColumns.TECH.computedValue"
++    },
++    {
++      "key": "primaryColumns.TECH.selectOptions"
++    },
++    {
++      "key": "primaryColumns.LOT_ID.isCellEditable"
++    },
++    {
++      "key": "primaryColumns.LOT_ID.computedValue"
++    },
++    {
++      "key": "primaryColumns.EXTERNAL_PRIORITY.isCellEditable"
++    },
++    {
++      "key": "primaryColumns.EXTERNAL_PRIORITY.computedValue"
++    },
++    {
++      "key": "primaryColumns.STATUS.textColor"
++    },
++    {
++      "key": "primaryColumns.STATUS.computedValue"
++    },
++    {
++      "key": "primaryColumns.Remove.isCellVisible"
++    },
++    {
++      "key": "primaryColumns.Remove.buttonLabel"
++    },
++    {
++      "key": "primaryColumns.Remove.buttonColor"
++    },
++    {
++      "key": "primaryColumns.Remove.borderRadius"
++    },
++    {
++      "key": "primaryColumns.Remove.boxShadow"
++    },
++    {
++      "key": "primaryColumns.EditActions1.saveButtonColor"
++    },
++    {
++      "key": "primaryColumns.EditActions1.saveBorderRadius"
++    },
++    {
++      "key": "primaryColumns.EditActions1.discardButtonColor"
++    },
++    {
++      "key": "primaryColumns.EditActions1.discardBorderRadius"
++    },
++    {
++      "key": "primaryColumns.EditActions1.isSaveDisabled"
++    },
++    {
++      "key": "primaryColumns.EditActions1.isDiscardDisabled"
++    }
++  ],
++  "dynamicPropertyPathList": [
++    {
++      "key": "allowAddNewRow"
++    }
++  ],
++  "dynamicTriggerPathList": [
++    {
++      "key": "onAddNewRowSave"
++    },
++    {
++      "key": "primaryColumns.Remove.onClick"
++    },
++    {
++      "key": "primaryColumns.EditActions1.onSave"
++    }
++  ],
++  "enableClientSideSearch": true,
++  "endOfData": false,
++  "flexVerticalAlignment": "start",
++  "horizontalAlignment": "LEFT",
++  "inlineEditingSaveOption": "ROW_LEVEL",
++  "isLoading": false,
++  "isSortable": true,
++  "isVisible": true,
++  "isVisibleDownload": true,
++  "isVisibleFilters": true,
++  "isVisiblePagination": true,
++  "isVisibleSearch": true,
++  "key": "xbnrnugp6n",
++  "label": "Data",
++  "leftColumn": 0,
++  "minWidth": 450,
++  "mobileBottomRow": 84,
++  "mobileLeftColumn": 0,
++  "mobileRightColumn": 64,
++  "mobileTopRow": 15,
++  "needsErrorInfo": false,
++  "onAddNewRowSave": "{{MockApi.addUploadRow(tbl_upload.newRow)}}",
++  "originalBottomRow": 84,
++  "originalTopRow": 15,
++  "parentColumnSpace": 19.9375,
++  "parentId": "5x9bg43q7v",
++  "parentRowSpace": 10,
++  "primaryColumnId": "ROW_NO",
++  "primaryColumns": {
++    "EXTERNAL_PRIORITY": {
++      "alias": "EXTERNAL_PRIORITY",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "number",
++      "computedValue": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"EXTERNAL_PRIORITY\"])) : currentRow[\"EXTERNAL_PRIORITY\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "EXTERNAL_PRIORITY",
++      "index": 3,
++      "isCellEditable": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (!MockApi.uploadStatus.BATCH_ID)) : !MockApi.uploadStatus.BATCH_ID })()}}",
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": true,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "External priority",
++      "notation": "standard",
++      "originalId": "EXTERNAL_PRIORITY",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": false,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 150
++    },
++    "EditActions1": {
++      "alias": "EditActions1",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "buttonStyle": "rgb(3, 179, 101)",
++      "columnType": "editActions",
++      "computedValue": "",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "discardActionLabel": "Discard",
++      "discardBorderRadius": "{{tbl_upload.processedTableData.map((currentRow, currentIndex) => ( appsmith.theme.borderRadius.appBorderRadius))}}",
++      "discardButtonColor": "{{tbl_upload.processedTableData.map((currentRow, currentIndex) => ( appsmith.theme.colors.primaryColor))}}",
++      "discardButtonVariant": "TERTIARY",
++      "discardIconAlign": "left",
++      "enableFilter": false,
++      "enableSort": false,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "EditActions1",
++      "index": 6,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": true,
++      "isDisabled": false,
++      "isDiscardDisabled": "{{tbl_upload.processedTableData.map((currentRow, currentIndex) => ( !tbl_upload.updatedRowIndices.includes(currentIndex)))}}",
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveDisabled": "{{tbl_upload.processedTableData.map((currentRow, currentIndex) => ( !tbl_upload.updatedRowIndices.includes(currentIndex)))}}",
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "Save / Discard",
++      "notation": "standard",
++      "onSave": "{{MockApi.saveUploadRow(tbl_upload.updatedRow)}}",
++      "originalId": "EditActions1",
++      "saveActionLabel": "Save",
++      "saveBorderRadius": "{{tbl_upload.processedTableData.map((currentRow, currentIndex) => ( appsmith.theme.borderRadius.appBorderRadius))}}",
++      "saveButtonColor": "{{tbl_upload.processedTableData.map((currentRow, currentIndex) => ( appsmith.theme.colors.primaryColor))}}",
++      "saveIconAlign": "left",
++      "sticky": "right",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 150
++    },
++    "LOT_ID": {
++      "alias": "LOT_ID",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "text",
++      "computedValue": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"LOT_ID\"])) : currentRow[\"LOT_ID\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "LOT_ID",
++      "index": 2,
++      "isCellEditable": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (!MockApi.uploadStatus.BATCH_ID)) : !MockApi.uploadStatus.BATCH_ID })()}}",
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": true,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "Lot ID",
++      "notation": "standard",
++      "originalId": "LOT_ID",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 180
++    },
++    "ROW_NO": {
++      "alias": "ROW_NO",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "number",
++      "computedValue": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"ROW_NO\"])) : currentRow[\"ROW_NO\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "ROW_NO",
++      "index": 0,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": false,
++      "label": "ROW_NO",
++      "notation": "standard",
++      "originalId": "ROW_NO",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": false,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 150
++    },
++    "Remove": {
++      "alias": "Remove",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "borderRadius": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (appsmith.theme.borderRadius.appBorderRadius)) : appsmith.theme.borderRadius.appBorderRadius })()}}",
++      "boxShadow": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => ('none')) : 'none' })()}}",
++      "buttonColor": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (\"#B91C1C\")) : \"#B91C1C\" })()}}",
++      "buttonLabel": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (\"Remove\")) : \"Remove\" })()}}",
++      "buttonVariant": "SECONDARY",
++      "columnType": "button",
++      "computedValue": "",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": false,
++      "enableSort": false,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "Remove",
++      "index": 5,
++      "isCellEditable": false,
++      "isCellVisible": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (!MockApi.uploadStatus.BATCH_ID)) : !MockApi.uploadStatus.BATCH_ID })()}}",
++      "isDerived": true,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "",
++      "notation": "standard",
++      "onClick": "{{MockApi.removeUploadRow(currentRow)}}",
++      "originalId": "Remove",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 90
++    },
++    "STATUS": {
++      "alias": "STATUS",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "text",
++      "computedValue": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"STATUS\"])) : currentRow[\"STATUS\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "STATUS",
++      "index": 4,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "Status",
++      "notation": "standard",
++      "originalId": "STATUS",
++      "sticky": "",
++      "textColor": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"STATUS\"] === \"OK\" ? \"#15803D\" : currentRow[\"STATUS\"] === \"PENDING\" ? \"#6B7280\" : \"#B91C1C\")) : currentRow[\"STATUS\"] === \"OK\" ? \"#15803D\" : currentRow[\"STATUS\"] === \"PENDING\" ? \"#6B7280\" : \"#B91C1C\" })()}}",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 320
++    },
++    "TECH": {
++      "alias": "TECH",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "select",
++      "computedValue": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"TECH\"])) : currentRow[\"TECH\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "TECH",
++      "index": 1,
++      "isCellEditable": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (!MockApi.uploadStatus.BATCH_ID)) : !MockApi.uploadStatus.BATCH_ID })()}}",
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": true,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "Tech",
++      "notation": "standard",
++      "originalId": "TECH",
++      "selectOptions": "{{(() => { const tableData = tbl_upload.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (MockApi.lookupsData.TECH)) : MockApi.lookupsData.TECH })()}}",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 140
++    }
++  },
++  "renderMode": "CANVAS",
++  "responsiveBehavior": "fill",
++  "rightColumn": 64,
++  "searchKey": "",
++  "tableData": "{{MockApi.uploadRows}}",
++  "textSize": "0.875rem",
++  "topRow": 15,
++  "totalRecordsCount": 0,
++  "type": "TABLE_WIDGET_V2",
++  "version": 2,
++  "verticalAlignment": "CENTER",
++  "widgetId": "za0xpz8eue",
++  "widgetName": "tbl_upload"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/txt_pending.json b/pages/Page1/widgets/Tabs1/txt_pending.json
+new file mode 100644
+index 0000000..9168b95
+--- /dev/null
++++ b/pages/Page1/widgets/Tabs1/txt_pending.json
+@@ -0,0 +1,55 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 13,
++  "dynamicBindingPathList": [
++    {
++      "key": "text"
++    },
++    {
++      "key": "truncateButtonColor"
++    },
++    {
++      "key": "fontFamily"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "AUTO_HEIGHT",
++  "dynamicTriggerPathList": [],
++  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
++  "fontSize": "0.875rem",
++  "fontStyle": "",
++  "isLoading": false,
++  "isVisible": true,
++  "key": "v8kvi97hpb",
++  "leftColumn": 0,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 4,
++  "minWidth": 450,
++  "mobileBottomRow": 13,
++  "mobileLeftColumn": 0,
++  "mobileRightColumn": 64,
++  "mobileTopRow": 9,
++  "needsErrorInfo": false,
++  "originalBottomRow": 13,
++  "originalTopRow": 9,
++  "overflow": "NONE",
++  "parentColumnSpace": 19.9375,
++  "parentId": "mqzoeeffok",
++  "parentRowSpace": 10,
++  "renderMode": "CANVAS",
++  "responsiveBehavior": "fill",
++  "rightColumn": 64,
++  "shouldTruncate": false,
++  "text": "{{MockApi.pendingCount ? MockApi.pendingCount + ' unsaved change(s). Nothing is written until you click Save changes.' : 'No unsaved changes'}}",
++  "textAlign": "LEFT",
++  "textColor": "#B45309",
++  "topRow": 9,
++  "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "type": "TEXT_WIDGET",
++  "version": 1,
++  "widgetId": "nax09br62d",
++  "widgetName": "txt_pending"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/txt_uploadHelp.json b/pages/Page1/widgets/Tabs1/txt_uploadHelp.json
+new file mode 100644
+index 0000000..eaba979
+--- /dev/null
++++ b/pages/Page1/widgets/Tabs1/txt_uploadHelp.json
+@@ -0,0 +1,52 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 4,
++  "dynamicBindingPathList": [
++    {
++      "key": "truncateButtonColor"
++    },
++    {
++      "key": "fontFamily"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "AUTO_HEIGHT",
++  "dynamicTriggerPathList": [],
++  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
++  "fontSize": "0.875rem",
++  "fontStyle": "",
++  "isLoading": false,
++  "isVisible": true,
++  "key": "1f1h4hxbfn",
++  "leftColumn": 0,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 4,
++  "minWidth": 450,
++  "mobileBottomRow": 4,
++  "mobileLeftColumn": 0,
++  "mobileRightColumn": 64,
++  "mobileTopRow": 0,
++  "needsErrorInfo": false,
++  "originalBottomRow": 4,
++  "originalTopRow": 0,
++  "overflow": "NONE",
++  "parentColumnSpace": 19.9375,
++  "parentId": "5x9bg43q7v",
++  "parentRowSpace": 10,
++  "renderMode": "CANVAS",
++  "responsiveBehavior": "fill",
++  "rightColumn": 64,
++  "shouldTruncate": false,
++  "text": "Load a .csv / .xlsx file (columns TECH, LOT_ID, EXTERNAL_PRIORITY) or add rows in the grid. Fix every row whose STATUS is not OK, then click Upload Priority.",
++  "textAlign": "LEFT",
++  "textColor": "#4B5563",
++  "topRow": 0,
++  "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "type": "TEXT_WIDGET",
++  "version": 1,
++  "widgetId": "bh4ukuhdkc",
++  "widgetName": "txt_uploadHelp"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/Tabs1/txt_uploadSummary.json b/pages/Page1/widgets/Tabs1/txt_uploadSummary.json
+new file mode 100644
+index 0000000..46fc6fd
+--- /dev/null
++++ b/pages/Page1/widgets/Tabs1/txt_uploadSummary.json
+@@ -0,0 +1,55 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 14,
++  "dynamicBindingPathList": [
++    {
++      "key": "text"
++    },
++    {
++      "key": "truncateButtonColor"
++    },
++    {
++      "key": "fontFamily"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "AUTO_HEIGHT",
++  "dynamicTriggerPathList": [],
++  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
++  "fontSize": "0.875rem",
++  "fontStyle": "BOLD",
++  "isLoading": false,
++  "isVisible": true,
++  "key": "pch2p8ofq4",
++  "leftColumn": 0,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 4,
++  "minWidth": 450,
++  "mobileBottomRow": 14,
++  "mobileLeftColumn": 0,
++  "mobileRightColumn": 40,
++  "mobileTopRow": 10,
++  "needsErrorInfo": false,
++  "originalBottomRow": 14,
++  "originalTopRow": 10,
++  "overflow": "NONE",
++  "parentColumnSpace": 19.9375,
++  "parentId": "5x9bg43q7v",
++  "parentRowSpace": 10,
++  "renderMode": "CANVAS",
++  "responsiveBehavior": "fill",
++  "rightColumn": 40,
++  "shouldTruncate": false,
++  "text": "{{MockApi.uploadStatus.BATCH_ID ? 'Batch ' + MockApi.uploadStatus.BATCH_ID + ' - ' + MockApi.uploadStatus.STATUS + ': ' + MockApi.uploadStatus.OK_COUNT + ' OK, ' + MockApi.uploadStatus.FAILED_COUNT + ' failed' : (MockApi.uploadRows.length ? MockApi.uploadCheck.OK_COUNT + ' row(s) OK, ' + MockApi.uploadCheck.ERROR_COUNT + ' with problems' : 'No rows yet')}}",
++  "textAlign": "LEFT",
++  "textColor": "#231F20",
++  "topRow": 10,
++  "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "type": "TEXT_WIDGET",
++  "version": 1,
++  "widgetId": "jupw4xuyyb",
++  "widgetName": "txt_uploadSummary"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/mdl_confirmDelete/btn_deleteCancel.json b/pages/Page1/widgets/mdl_confirmDelete/btn_deleteCancel.json
+new file mode 100644
+index 0000000..327118d
+--- /dev/null
++++ b/pages/Page1/widgets/mdl_confirmDelete/btn_deleteCancel.json
+@@ -0,0 +1,50 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 18,
++  "boxShadow": "none",
++  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "buttonVariant": "SECONDARY",
++  "disabledWhenInvalid": false,
++  "dynamicBindingPathList": [
++    {
++      "key": "buttonColor"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicTriggerPathList": [
++    {
++      "key": "onClick"
++    }
++  ],
++  "isDefaultClickDisabled": true,
++  "isDisabled": false,
++  "isLoading": false,
++  "isVisible": true,
++  "key": "pm3hgclxkm",
++  "leftColumn": 27,
++  "minWidth": 120,
++  "mobileBottomRow": 18,
++  "mobileLeftColumn": 27,
++  "mobileRightColumn": 44,
++  "mobileTopRow": 14,
++  "needsErrorInfo": false,
++  "onClick": "{{closeModal('mdl_confirmDelete')}}",
++  "parentColumnSpace": 6.875,
++  "parentId": "lsp078ky2y",
++  "parentRowSpace": 10,
++  "placement": "CENTER",
++  "recaptchaType": "V3",
++  "renderMode": "CANVAS",
++  "resetFormOnClick": false,
++  "responsiveBehavior": "hug",
++  "rightColumn": 44,
++  "text": "Cancel",
++  "topRow": 14,
++  "type": "BUTTON_WIDGET",
++  "version": 1,
++  "widgetId": "gtzrbjlkyp",
++  "widgetName": "btn_deleteCancel"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/mdl_confirmDelete/btn_deleteConfirm.json b/pages/Page1/widgets/mdl_confirmDelete/btn_deleteConfirm.json
+new file mode 100644
+index 0000000..d6ec6df
+--- /dev/null
++++ b/pages/Page1/widgets/mdl_confirmDelete/btn_deleteConfirm.json
+@@ -0,0 +1,47 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 18,
++  "boxShadow": "none",
++  "buttonColor": "#B91C1C",
++  "buttonVariant": "PRIMARY",
++  "disabledWhenInvalid": false,
++  "dynamicBindingPathList": [
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicTriggerPathList": [
++    {
++      "key": "onClick"
++    }
++  ],
++  "isDefaultClickDisabled": true,
++  "isDisabled": false,
++  "isLoading": false,
++  "isVisible": true,
++  "key": "qne1err4su",
++  "leftColumn": 45,
++  "minWidth": 120,
++  "mobileBottomRow": 18,
++  "mobileLeftColumn": 45,
++  "mobileRightColumn": 63,
++  "mobileTopRow": 14,
++  "needsErrorInfo": false,
++  "onClick": "{{MockApi.markDelete(tbl_params.selectedRow)}}",
++  "parentColumnSpace": 6.875,
++  "parentId": "lsp078ky2y",
++  "parentRowSpace": 10,
++  "placement": "CENTER",
++  "recaptchaType": "V3",
++  "renderMode": "CANVAS",
++  "resetFormOnClick": false,
++  "responsiveBehavior": "hug",
++  "rightColumn": 63,
++  "text": "Delete",
++  "topRow": 14,
++  "type": "BUTTON_WIDGET",
++  "version": 1,
++  "widgetId": "mboxt2nkbb",
++  "widgetName": "btn_deleteConfirm"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/mdl_confirmDelete/mdl_confirmDelete.json b/pages/Page1/widgets/mdl_confirmDelete/mdl_confirmDelete.json
+new file mode 100644
+index 0000000..65fb65c
+--- /dev/null
++++ b/pages/Page1/widgets/mdl_confirmDelete/mdl_confirmDelete.json
+@@ -0,0 +1,77 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 200,
++  "boxShadow": "none",
++  "canEscapeKeyClose": true,
++  "canOutsideClickClose": false,
++  "children": [
++    {
++      "bottomRow": 200,
++      "canExtend": true,
++      "containerStyle": "none",
++      "detachFromLayout": true,
++      "dynamicBindingPathList": [],
++      "dynamicTriggerPathList": [],
++      "flexLayers": [],
++      "isDisabled": false,
++      "isLoading": false,
++      "isVisible": true,
++      "key": "jpa9ssee6i",
++      "leftColumn": 0,
++      "minHeight": 200,
++      "minWidth": 450,
++      "mobileBottomRow": 200,
++      "mobileLeftColumn": 0,
++      "mobileRightColumn": 440,
++      "mobileTopRow": 0,
++      "needsErrorInfo": false,
++      "parentColumnSpace": 1,
++      "parentId": "h4xy59hny5",
++      "parentRowSpace": 1,
++      "renderMode": "CANVAS",
++      "responsiveBehavior": "fill",
++      "rightColumn": 440,
++      "shouldScrollContents": false,
++      "topRow": 0,
++      "type": "CANVAS_WIDGET",
++      "version": 1,
++      "widgetId": "lsp078ky2y",
++      "widgetName": "cnv_mdl_confirmDelete"
++    }
++  ],
++  "detachFromLayout": true,
++  "dynamicBindingPathList": [
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "AUTO_HEIGHT",
++  "dynamicTriggerPathList": [],
++  "height": 200,
++  "isCanvas": true,
++  "isLoading": false,
++  "key": "oqdy2xxy4d",
++  "leftColumn": 0,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 24,
++  "minWidth": 450,
++  "mobileBottomRow": 200,
++  "mobileLeftColumn": 0,
++  "mobileRightColumn": 64,
++  "mobileTopRow": 0,
++  "needsErrorInfo": false,
++  "parentColumnSpace": 1,
++  "parentId": "0",
++  "parentRowSpace": 10,
++  "renderMode": "CANVAS",
++  "responsiveBehavior": "fill",
++  "rightColumn": 64,
++  "shouldScrollContents": true,
++  "topRow": 0,
++  "type": "MODAL_WIDGET",
++  "version": 2,
++  "widgetId": "h4xy59hny5",
++  "widgetName": "mdl_confirmDelete",
++  "width": 440
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/mdl_confirmDelete/txt_deleteBody.json b/pages/Page1/widgets/mdl_confirmDelete/txt_deleteBody.json
+new file mode 100644
+index 0000000..fc00345
+--- /dev/null
++++ b/pages/Page1/widgets/mdl_confirmDelete/txt_deleteBody.json
+@@ -0,0 +1,55 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 12,
++  "dynamicBindingPathList": [
++    {
++      "key": "text"
++    },
++    {
++      "key": "truncateButtonColor"
++    },
++    {
++      "key": "fontFamily"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "AUTO_HEIGHT",
++  "dynamicTriggerPathList": [],
++  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
++  "fontSize": "0.875rem",
++  "fontStyle": "",
++  "isLoading": false,
++  "isVisible": true,
++  "key": "e3jrtbs0pu",
++  "leftColumn": 1,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 4,
++  "minWidth": 450,
++  "mobileBottomRow": 12,
++  "mobileLeftColumn": 1,
++  "mobileRightColumn": 63,
++  "mobileTopRow": 6,
++  "needsErrorInfo": false,
++  "originalBottomRow": 12,
++  "originalTopRow": 6,
++  "overflow": "NONE",
++  "parentColumnSpace": 6.875,
++  "parentId": "lsp078ky2y",
++  "parentRowSpace": 10,
++  "renderMode": "CANVAS",
++  "responsiveBehavior": "fill",
++  "rightColumn": 63,
++  "shouldTruncate": false,
++  "text": "Row {{tbl_params.selectedRow.PARAM_ID}} ({{tbl_params.selectedRow.OPERATION_START}} - {{tbl_params.selectedRow.OPERATION_END}}, {{tbl_params.selectedRow.RANGE_FROM}} - {{tbl_params.selectedRow.RANGE_TO}}) will be marked for delete. It is removed when you click Save changes.",
++  "textAlign": "LEFT",
++  "textColor": "#231F20",
++  "topRow": 6,
++  "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "type": "TEXT_WIDGET",
++  "version": 1,
++  "widgetId": "37ig0pvq0k",
++  "widgetName": "txt_deleteBody"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/mdl_confirmDelete/txt_deleteTitle.json b/pages/Page1/widgets/mdl_confirmDelete/txt_deleteTitle.json
+new file mode 100644
+index 0000000..18648a4
+--- /dev/null
++++ b/pages/Page1/widgets/mdl_confirmDelete/txt_deleteTitle.json
+@@ -0,0 +1,52 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 5,
++  "dynamicBindingPathList": [
++    {
++      "key": "truncateButtonColor"
++    },
++    {
++      "key": "fontFamily"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "AUTO_HEIGHT",
++  "dynamicTriggerPathList": [],
++  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
++  "fontSize": "1.25rem",
++  "fontStyle": "BOLD",
++  "isLoading": false,
++  "isVisible": true,
++  "key": "h99g08ta7n",
++  "leftColumn": 1,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 4,
++  "minWidth": 450,
++  "mobileBottomRow": 5,
++  "mobileLeftColumn": 1,
++  "mobileRightColumn": 63,
++  "mobileTopRow": 1,
++  "needsErrorInfo": false,
++  "originalBottomRow": 5,
++  "originalTopRow": 1,
++  "overflow": "NONE",
++  "parentColumnSpace": 6.875,
++  "parentId": "lsp078ky2y",
++  "parentRowSpace": 10,
++  "renderMode": "CANVAS",
++  "responsiveBehavior": "fill",
++  "rightColumn": 63,
++  "shouldTruncate": false,
++  "text": "Delete row?",
++  "textAlign": "LEFT",
++  "textColor": "#231F20",
++  "topRow": 1,
++  "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "type": "TEXT_WIDGET",
++  "version": 1,
++  "widgetId": "w1zjtrad3q",
++  "widgetName": "txt_deleteTitle"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/mdl_rowForm/btn_formCancel.json b/pages/Page1/widgets/mdl_rowForm/btn_formCancel.json
+new file mode 100644
+index 0000000..791f48a
+--- /dev/null
++++ b/pages/Page1/widgets/mdl_rowForm/btn_formCancel.json
+@@ -0,0 +1,50 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 45,
++  "boxShadow": "none",
++  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "buttonVariant": "SECONDARY",
++  "disabledWhenInvalid": false,
++  "dynamicBindingPathList": [
++    {
++      "key": "buttonColor"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicTriggerPathList": [
++    {
++      "key": "onClick"
++    }
++  ],
++  "isDefaultClickDisabled": true,
++  "isDisabled": false,
++  "isLoading": false,
++  "isVisible": true,
++  "key": "1ux8k4qaji",
++  "leftColumn": 31,
++  "minWidth": 120,
++  "mobileBottomRow": 45,
++  "mobileLeftColumn": 31,
++  "mobileRightColumn": 46,
++  "mobileTopRow": 41,
++  "needsErrorInfo": false,
++  "onClick": "{{closeModal('mdl_rowForm')}}",
++  "parentColumnSpace": 8.75,
++  "parentId": "33ll492zsu",
++  "parentRowSpace": 10,
++  "placement": "CENTER",
++  "recaptchaType": "V3",
++  "renderMode": "CANVAS",
++  "resetFormOnClick": false,
++  "responsiveBehavior": "hug",
++  "rightColumn": 46,
++  "text": "Cancel",
++  "topRow": 41,
++  "type": "BUTTON_WIDGET",
++  "version": 1,
++  "widgetId": "xzb6if0t11",
++  "widgetName": "btn_formCancel"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/mdl_rowForm/btn_formSubmit.json b/pages/Page1/widgets/mdl_rowForm/btn_formSubmit.json
+new file mode 100644
+index 0000000..362d9e0
+--- /dev/null
++++ b/pages/Page1/widgets/mdl_rowForm/btn_formSubmit.json
+@@ -0,0 +1,53 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 45,
++  "boxShadow": "none",
++  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "buttonVariant": "PRIMARY",
++  "disabledWhenInvalid": false,
++  "dynamicBindingPathList": [
++    {
++      "key": "text"
++    },
++    {
++      "key": "buttonColor"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicTriggerPathList": [
++    {
++      "key": "onClick"
++    }
++  ],
++  "isDefaultClickDisabled": true,
++  "isDisabled": false,
++  "isLoading": false,
++  "isVisible": true,
++  "key": "zaczq9fqm9",
++  "leftColumn": 47,
++  "minWidth": 120,
++  "mobileBottomRow": 45,
++  "mobileLeftColumn": 47,
++  "mobileRightColumn": 63,
++  "mobileTopRow": 41,
++  "needsErrorInfo": false,
++  "onClick": "{{MockApi.submitForm({ TECH: sel_rowTech.selectedOptionValue, OPERATION_START: inp_opStart.text, OPERATION_END: inp_opEnd.text, RULE_FORMULA: sel_rowFormula.selectedOptionValue, RANGE_FROM: inp_rangeFrom.text, RANGE_TO: inp_rangeTo.text, PRIORITY_NUMBER: inp_priorityNo.text })}}",
++  "parentColumnSpace": 8.75,
++  "parentId": "33ll492zsu",
++  "parentRowSpace": 10,
++  "placement": "CENTER",
++  "recaptchaType": "V3",
++  "renderMode": "CANVAS",
++  "resetFormOnClick": false,
++  "responsiveBehavior": "hug",
++  "rightColumn": 63,
++  "text": "{{MockApi.formMode === 'UPDATE' ? 'Update row' : 'Add row'}}",
++  "topRow": 41,
++  "type": "BUTTON_WIDGET",
++  "version": 1,
++  "widgetId": "cigir79lsj",
++  "widgetName": "btn_formSubmit"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/mdl_rowForm/inp_opEnd.json b/pages/Page1/widgets/mdl_rowForm/inp_opEnd.json
+new file mode 100644
+index 0000000..16528b5
+--- /dev/null
++++ b/pages/Page1/widgets/mdl_rowForm/inp_opEnd.json
+@@ -0,0 +1,61 @@
++{
++  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
++  "animateLoading": true,
++  "autoFocus": false,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 21,
++  "boxShadow": "none",
++  "defaultText": "{{MockApi.formData.OPERATION_END}}",
++  "dynamicBindingPathList": [
++    {
++      "key": "defaultText"
++    },
++    {
++      "key": "accentColor"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "AUTO_HEIGHT",
++  "dynamicTriggerPathList": [],
++  "iconAlign": "left",
++  "inputType": "TEXT",
++  "isDisabled": false,
++  "isLoading": false,
++  "isRequired": true,
++  "isVisible": true,
++  "key": "gevexhydwe",
++  "label": "Operation end",
++  "labelAlignment": "left",
++  "labelPosition": "Top",
++  "labelStyle": "",
++  "labelTextSize": "0.875rem",
++  "labelWidth": 5,
++  "leftColumn": 33,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 4,
++  "minWidth": 450,
++  "mobileBottomRow": 21,
++  "mobileLeftColumn": 33,
++  "mobileRightColumn": 63,
++  "mobileTopRow": 14,
++  "needsErrorInfo": false,
++  "originalBottomRow": 21,
++  "originalTopRow": 14,
++  "parentColumnSpace": 8.75,
++  "parentId": "33ll492zsu",
++  "parentRowSpace": 10,
++  "placeholderText": "1980.999",
++  "renderMode": "CANVAS",
++  "resetOnSubmit": false,
++  "responsiveBehavior": "fill",
++  "rightColumn": 63,
++  "shouldAllowAutofill": false,
++  "showStepArrows": false,
++  "topRow": 14,
++  "type": "INPUT_WIDGET_V2",
++  "version": 2,
++  "widgetId": "9t7cqxdkfx",
++  "widgetName": "inp_opEnd"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/mdl_rowForm/inp_opStart.json b/pages/Page1/widgets/mdl_rowForm/inp_opStart.json
+new file mode 100644
+index 0000000..d9607cf
+--- /dev/null
++++ b/pages/Page1/widgets/mdl_rowForm/inp_opStart.json
+@@ -0,0 +1,61 @@
++{
++  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
++  "animateLoading": true,
++  "autoFocus": false,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 21,
++  "boxShadow": "none",
++  "defaultText": "{{MockApi.formData.OPERATION_START}}",
++  "dynamicBindingPathList": [
++    {
++      "key": "defaultText"
++    },
++    {
++      "key": "accentColor"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "AUTO_HEIGHT",
++  "dynamicTriggerPathList": [],
++  "iconAlign": "left",
++  "inputType": "TEXT",
++  "isDisabled": false,
++  "isLoading": false,
++  "isRequired": true,
++  "isVisible": true,
++  "key": "ofemz84h0a",
++  "label": "Operation start",
++  "labelAlignment": "left",
++  "labelPosition": "Top",
++  "labelStyle": "",
++  "labelTextSize": "0.875rem",
++  "labelWidth": 5,
++  "leftColumn": 1,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 4,
++  "minWidth": 450,
++  "mobileBottomRow": 21,
++  "mobileLeftColumn": 1,
++  "mobileRightColumn": 31,
++  "mobileTopRow": 14,
++  "needsErrorInfo": false,
++  "originalBottomRow": 21,
++  "originalTopRow": 14,
++  "parentColumnSpace": 8.75,
++  "parentId": "33ll492zsu",
++  "parentRowSpace": 10,
++  "placeholderText": "0075.001",
++  "renderMode": "CANVAS",
++  "resetOnSubmit": false,
++  "responsiveBehavior": "fill",
++  "rightColumn": 31,
++  "shouldAllowAutofill": false,
++  "showStepArrows": false,
++  "topRow": 14,
++  "type": "INPUT_WIDGET_V2",
++  "version": 2,
++  "widgetId": "7kvoocem3q",
++  "widgetName": "inp_opStart"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/mdl_rowForm/inp_priorityNo.json b/pages/Page1/widgets/mdl_rowForm/inp_priorityNo.json
+new file mode 100644
+index 0000000..4c37234
+--- /dev/null
++++ b/pages/Page1/widgets/mdl_rowForm/inp_priorityNo.json
+@@ -0,0 +1,61 @@
++{
++  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
++  "animateLoading": true,
++  "autoFocus": false,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 37,
++  "boxShadow": "none",
++  "defaultText": "{{MockApi.formData.PRIORITY_NUMBER}}",
++  "dynamicBindingPathList": [
++    {
++      "key": "defaultText"
++    },
++    {
++      "key": "accentColor"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "AUTO_HEIGHT",
++  "dynamicTriggerPathList": [],
++  "iconAlign": "left",
++  "inputType": "NUMBER",
++  "isDisabled": false,
++  "isLoading": false,
++  "isRequired": true,
++  "isVisible": true,
++  "key": "hyvo4acvw5",
++  "label": "Priority number",
++  "labelAlignment": "left",
++  "labelPosition": "Top",
++  "labelStyle": "",
++  "labelTextSize": "0.875rem",
++  "labelWidth": 5,
++  "leftColumn": 1,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 4,
++  "minWidth": 450,
++  "mobileBottomRow": 37,
++  "mobileLeftColumn": 1,
++  "mobileRightColumn": 31,
++  "mobileTopRow": 30,
++  "needsErrorInfo": false,
++  "originalBottomRow": 37,
++  "originalTopRow": 30,
++  "parentColumnSpace": 8.75,
++  "parentId": "33ll492zsu",
++  "parentRowSpace": 10,
++  "placeholderText": "",
++  "renderMode": "CANVAS",
++  "resetOnSubmit": false,
++  "responsiveBehavior": "fill",
++  "rightColumn": 31,
++  "shouldAllowAutofill": false,
++  "showStepArrows": false,
++  "topRow": 30,
++  "type": "INPUT_WIDGET_V2",
++  "version": 2,
++  "widgetId": "wo28kznb8n",
++  "widgetName": "inp_priorityNo"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/mdl_rowForm/inp_rangeFrom.json b/pages/Page1/widgets/mdl_rowForm/inp_rangeFrom.json
+new file mode 100644
+index 0000000..28c4019
+--- /dev/null
++++ b/pages/Page1/widgets/mdl_rowForm/inp_rangeFrom.json
+@@ -0,0 +1,61 @@
++{
++  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
++  "animateLoading": true,
++  "autoFocus": false,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 29,
++  "boxShadow": "none",
++  "defaultText": "{{MockApi.formData.RANGE_FROM}}",
++  "dynamicBindingPathList": [
++    {
++      "key": "defaultText"
++    },
++    {
++      "key": "accentColor"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "AUTO_HEIGHT",
++  "dynamicTriggerPathList": [],
++  "iconAlign": "left",
++  "inputType": "NUMBER",
++  "isDisabled": false,
++  "isLoading": false,
++  "isRequired": true,
++  "isVisible": true,
++  "key": "v8qja58pmr",
++  "label": "Range from",
++  "labelAlignment": "left",
++  "labelPosition": "Top",
++  "labelStyle": "",
++  "labelTextSize": "0.875rem",
++  "labelWidth": 5,
++  "leftColumn": 1,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 4,
++  "minWidth": 450,
++  "mobileBottomRow": 29,
++  "mobileLeftColumn": 1,
++  "mobileRightColumn": 31,
++  "mobileTopRow": 22,
++  "needsErrorInfo": false,
++  "originalBottomRow": 29,
++  "originalTopRow": 22,
++  "parentColumnSpace": 8.75,
++  "parentId": "33ll492zsu",
++  "parentRowSpace": 10,
++  "placeholderText": "",
++  "renderMode": "CANVAS",
++  "resetOnSubmit": false,
++  "responsiveBehavior": "fill",
++  "rightColumn": 31,
++  "shouldAllowAutofill": false,
++  "showStepArrows": false,
++  "topRow": 22,
++  "type": "INPUT_WIDGET_V2",
++  "version": 2,
++  "widgetId": "d2bdoki2rv",
++  "widgetName": "inp_rangeFrom"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/mdl_rowForm/inp_rangeTo.json b/pages/Page1/widgets/mdl_rowForm/inp_rangeTo.json
+new file mode 100644
+index 0000000..94c9d23
+--- /dev/null
++++ b/pages/Page1/widgets/mdl_rowForm/inp_rangeTo.json
+@@ -0,0 +1,61 @@
++{
++  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
++  "animateLoading": true,
++  "autoFocus": false,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 29,
++  "boxShadow": "none",
++  "defaultText": "{{MockApi.formData.RANGE_TO}}",
++  "dynamicBindingPathList": [
++    {
++      "key": "defaultText"
++    },
++    {
++      "key": "accentColor"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "AUTO_HEIGHT",
++  "dynamicTriggerPathList": [],
++  "iconAlign": "left",
++  "inputType": "NUMBER",
++  "isDisabled": false,
++  "isLoading": false,
++  "isRequired": true,
++  "isVisible": true,
++  "key": "q8r8s9ip0r",
++  "label": "Range to",
++  "labelAlignment": "left",
++  "labelPosition": "Top",
++  "labelStyle": "",
++  "labelTextSize": "0.875rem",
++  "labelWidth": 5,
++  "leftColumn": 33,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 4,
++  "minWidth": 450,
++  "mobileBottomRow": 29,
++  "mobileLeftColumn": 33,
++  "mobileRightColumn": 63,
++  "mobileTopRow": 22,
++  "needsErrorInfo": false,
++  "originalBottomRow": 29,
++  "originalTopRow": 22,
++  "parentColumnSpace": 8.75,
++  "parentId": "33ll492zsu",
++  "parentRowSpace": 10,
++  "placeholderText": "",
++  "renderMode": "CANVAS",
++  "resetOnSubmit": false,
++  "responsiveBehavior": "fill",
++  "rightColumn": 63,
++  "shouldAllowAutofill": false,
++  "showStepArrows": false,
++  "topRow": 22,
++  "type": "INPUT_WIDGET_V2",
++  "version": 2,
++  "widgetId": "n8ep3rdics",
++  "widgetName": "inp_rangeTo"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/mdl_rowForm/mdl_rowForm.json b/pages/Page1/widgets/mdl_rowForm/mdl_rowForm.json
+new file mode 100644
+index 0000000..fc65d30
+--- /dev/null
++++ b/pages/Page1/widgets/mdl_rowForm/mdl_rowForm.json
+@@ -0,0 +1,77 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 500,
++  "boxShadow": "none",
++  "canEscapeKeyClose": true,
++  "canOutsideClickClose": false,
++  "children": [
++    {
++      "bottomRow": 500,
++      "canExtend": true,
++      "containerStyle": "none",
++      "detachFromLayout": true,
++      "dynamicBindingPathList": [],
++      "dynamicTriggerPathList": [],
++      "flexLayers": [],
++      "isDisabled": false,
++      "isLoading": false,
++      "isVisible": true,
++      "key": "j79k4ohgxp",
++      "leftColumn": 0,
++      "minHeight": 500,
++      "minWidth": 450,
++      "mobileBottomRow": 500,
++      "mobileLeftColumn": 0,
++      "mobileRightColumn": 560,
++      "mobileTopRow": 0,
++      "needsErrorInfo": false,
++      "parentColumnSpace": 1,
++      "parentId": "9jw8066q6r",
++      "parentRowSpace": 1,
++      "renderMode": "CANVAS",
++      "responsiveBehavior": "fill",
++      "rightColumn": 560,
++      "shouldScrollContents": false,
++      "topRow": 0,
++      "type": "CANVAS_WIDGET",
++      "version": 1,
++      "widgetId": "33ll492zsu",
++      "widgetName": "cnv_mdl_rowForm"
++    }
++  ],
++  "detachFromLayout": true,
++  "dynamicBindingPathList": [
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "AUTO_HEIGHT",
++  "dynamicTriggerPathList": [],
++  "height": 500,
++  "isCanvas": true,
++  "isLoading": false,
++  "key": "e4u2z5it0u",
++  "leftColumn": 0,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 24,
++  "minWidth": 450,
++  "mobileBottomRow": 500,
++  "mobileLeftColumn": 0,
++  "mobileRightColumn": 64,
++  "mobileTopRow": 0,
++  "needsErrorInfo": false,
++  "parentColumnSpace": 1,
++  "parentId": "0",
++  "parentRowSpace": 10,
++  "renderMode": "CANVAS",
++  "responsiveBehavior": "fill",
++  "rightColumn": 64,
++  "shouldScrollContents": true,
++  "topRow": 0,
++  "type": "MODAL_WIDGET",
++  "version": 2,
++  "widgetId": "9jw8066q6r",
++  "widgetName": "mdl_rowForm",
++  "width": 560
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/mdl_rowForm/sel_rowFormula.json b/pages/Page1/widgets/mdl_rowForm/sel_rowFormula.json
+new file mode 100644
+index 0000000..964cf91
+--- /dev/null
++++ b/pages/Page1/widgets/mdl_rowForm/sel_rowFormula.json
+@@ -0,0 +1,65 @@
++{
++  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 13,
++  "boxShadow": "none",
++  "defaultOptionValue": "{{MockApi.formData.RULE_FORMULA}}",
++  "dynamicBindingPathList": [
++    {
++      "key": "sourceData"
++    },
++    {
++      "key": "defaultOptionValue"
++    },
++    {
++      "key": "accentColor"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "FIXED",
++  "dynamicPropertyPathList": [
++    {
++      "key": "sourceData"
++    }
++  ],
++  "dynamicTriggerPathList": [],
++  "isDisabled": false,
++  "isFilterable": true,
++  "isLoading": false,
++  "isRequired": true,
++  "isVisible": true,
++  "key": "gdnabr6kgd",
++  "labelAlignment": "left",
++  "labelPosition": "Top",
++  "labelText": "Rule formula",
++  "labelTextSize": "0.875rem",
++  "labelWidth": 5,
++  "leftColumn": 33,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 4,
++  "minWidth": 450,
++  "mobileBottomRow": 13,
++  "mobileLeftColumn": 33,
++  "mobileRightColumn": 63,
++  "mobileTopRow": 6,
++  "needsErrorInfo": false,
++  "optionLabel": "label",
++  "optionValue": "value",
++  "parentColumnSpace": 8.75,
++  "parentId": "33ll492zsu",
++  "parentRowSpace": 10,
++  "placeholderText": "Select",
++  "renderMode": "CANVAS",
++  "responsiveBehavior": "fill",
++  "rightColumn": 63,
++  "serverSideFiltering": false,
++  "sourceData": "{{MockApi.lookupsData.RULE_FORMULA}}",
++  "topRow": 6,
++  "type": "SELECT_WIDGET",
++  "version": 1,
++  "widgetId": "18k269dtln",
++  "widgetName": "sel_rowFormula"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/mdl_rowForm/sel_rowTech.json b/pages/Page1/widgets/mdl_rowForm/sel_rowTech.json
+new file mode 100644
+index 0000000..8786498
+--- /dev/null
++++ b/pages/Page1/widgets/mdl_rowForm/sel_rowTech.json
+@@ -0,0 +1,65 @@
++{
++  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 13,
++  "boxShadow": "none",
++  "defaultOptionValue": "{{MockApi.formData.TECH}}",
++  "dynamicBindingPathList": [
++    {
++      "key": "sourceData"
++    },
++    {
++      "key": "defaultOptionValue"
++    },
++    {
++      "key": "accentColor"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "FIXED",
++  "dynamicPropertyPathList": [
++    {
++      "key": "sourceData"
++    }
++  ],
++  "dynamicTriggerPathList": [],
++  "isDisabled": false,
++  "isFilterable": true,
++  "isLoading": false,
++  "isRequired": true,
++  "isVisible": true,
++  "key": "px6ina97ak",
++  "labelAlignment": "left",
++  "labelPosition": "Top",
++  "labelText": "Tech",
++  "labelTextSize": "0.875rem",
++  "labelWidth": 5,
++  "leftColumn": 1,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 4,
++  "minWidth": 450,
++  "mobileBottomRow": 13,
++  "mobileLeftColumn": 1,
++  "mobileRightColumn": 31,
++  "mobileTopRow": 6,
++  "needsErrorInfo": false,
++  "optionLabel": "label",
++  "optionValue": "value",
++  "parentColumnSpace": 8.75,
++  "parentId": "33ll492zsu",
++  "parentRowSpace": 10,
++  "placeholderText": "Select",
++  "renderMode": "CANVAS",
++  "responsiveBehavior": "fill",
++  "rightColumn": 31,
++  "serverSideFiltering": false,
++  "sourceData": "{{MockApi.lookupsData.TECH}}",
++  "topRow": 6,
++  "type": "SELECT_WIDGET",
++  "version": 1,
++  "widgetId": "fkwih2yf8c",
++  "widgetName": "sel_rowTech"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/mdl_rowForm/txt_formTitle.json b/pages/Page1/widgets/mdl_rowForm/txt_formTitle.json
+new file mode 100644
+index 0000000..f02cfa6
+--- /dev/null
++++ b/pages/Page1/widgets/mdl_rowForm/txt_formTitle.json
+@@ -0,0 +1,55 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 5,
++  "dynamicBindingPathList": [
++    {
++      "key": "text"
++    },
++    {
++      "key": "truncateButtonColor"
++    },
++    {
++      "key": "fontFamily"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "AUTO_HEIGHT",
++  "dynamicTriggerPathList": [],
++  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
++  "fontSize": "1.25rem",
++  "fontStyle": "BOLD",
++  "isLoading": false,
++  "isVisible": true,
++  "key": "ar4nfs8269",
++  "leftColumn": 1,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 4,
++  "minWidth": 450,
++  "mobileBottomRow": 5,
++  "mobileLeftColumn": 1,
++  "mobileRightColumn": 63,
++  "mobileTopRow": 1,
++  "needsErrorInfo": false,
++  "originalBottomRow": 5,
++  "originalTopRow": 1,
++  "overflow": "NONE",
++  "parentColumnSpace": 8.75,
++  "parentId": "33ll492zsu",
++  "parentRowSpace": 10,
++  "renderMode": "CANVAS",
++  "responsiveBehavior": "fill",
++  "rightColumn": 63,
++  "shouldTruncate": false,
++  "text": "{{MockApi.formTitle}}",
++  "textAlign": "LEFT",
++  "textColor": "#231F20",
++  "topRow": 1,
++  "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "type": "TEXT_WIDGET",
++  "version": 1,
++  "widgetId": "zgdvvjxf7i",
++  "widgetName": "txt_formTitle"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/mdl_ruleLookup/btn_lookupClose.json b/pages/Page1/widgets/mdl_ruleLookup/btn_lookupClose.json
+new file mode 100644
+index 0000000..40d208f
+--- /dev/null
++++ b/pages/Page1/widgets/mdl_ruleLookup/btn_lookupClose.json
+@@ -0,0 +1,50 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 52,
++  "boxShadow": "none",
++  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "buttonVariant": "SECONDARY",
++  "disabledWhenInvalid": false,
++  "dynamicBindingPathList": [
++    {
++      "key": "buttonColor"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicTriggerPathList": [
++    {
++      "key": "onClick"
++    }
++  ],
++  "isDefaultClickDisabled": true,
++  "isDisabled": false,
++  "isLoading": false,
++  "isVisible": true,
++  "key": "pe61hb5z2a",
++  "leftColumn": 52,
++  "minWidth": 120,
++  "mobileBottomRow": 52,
++  "mobileLeftColumn": 52,
++  "mobileRightColumn": 63,
++  "mobileTopRow": 48,
++  "needsErrorInfo": false,
++  "onClick": "{{closeModal('mdl_ruleLookup')}}",
++  "parentColumnSpace": 15.0,
++  "parentId": "w2ygm0162v",
++  "parentRowSpace": 10,
++  "placement": "CENTER",
++  "recaptchaType": "V3",
++  "renderMode": "CANVAS",
++  "resetFormOnClick": false,
++  "responsiveBehavior": "hug",
++  "rightColumn": 63,
++  "text": "Close",
++  "topRow": 48,
++  "type": "BUTTON_WIDGET",
++  "version": 1,
++  "widgetId": "ymgun3yz5a",
++  "widgetName": "btn_lookupClose"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/mdl_ruleLookup/mdl_ruleLookup.json b/pages/Page1/widgets/mdl_ruleLookup/mdl_ruleLookup.json
+new file mode 100644
+index 0000000..3325f87
+--- /dev/null
++++ b/pages/Page1/widgets/mdl_ruleLookup/mdl_ruleLookup.json
+@@ -0,0 +1,77 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 540,
++  "boxShadow": "none",
++  "canEscapeKeyClose": true,
++  "canOutsideClickClose": false,
++  "children": [
++    {
++      "bottomRow": 540,
++      "canExtend": true,
++      "containerStyle": "none",
++      "detachFromLayout": true,
++      "dynamicBindingPathList": [],
++      "dynamicTriggerPathList": [],
++      "flexLayers": [],
++      "isDisabled": false,
++      "isLoading": false,
++      "isVisible": true,
++      "key": "v4bqpxlp7f",
++      "leftColumn": 0,
++      "minHeight": 540,
++      "minWidth": 450,
++      "mobileBottomRow": 540,
++      "mobileLeftColumn": 0,
++      "mobileRightColumn": 960,
++      "mobileTopRow": 0,
++      "needsErrorInfo": false,
++      "parentColumnSpace": 1,
++      "parentId": "87be9ka2a0",
++      "parentRowSpace": 1,
++      "renderMode": "CANVAS",
++      "responsiveBehavior": "fill",
++      "rightColumn": 960,
++      "shouldScrollContents": false,
++      "topRow": 0,
++      "type": "CANVAS_WIDGET",
++      "version": 1,
++      "widgetId": "w2ygm0162v",
++      "widgetName": "cnv_mdl_ruleLookup"
++    }
++  ],
++  "detachFromLayout": true,
++  "dynamicBindingPathList": [
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "AUTO_HEIGHT",
++  "dynamicTriggerPathList": [],
++  "height": 540,
++  "isCanvas": true,
++  "isLoading": false,
++  "key": "k81u42ca9z",
++  "leftColumn": 0,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 24,
++  "minWidth": 450,
++  "mobileBottomRow": 540,
++  "mobileLeftColumn": 0,
++  "mobileRightColumn": 64,
++  "mobileTopRow": 0,
++  "needsErrorInfo": false,
++  "parentColumnSpace": 1,
++  "parentId": "0",
++  "parentRowSpace": 10,
++  "renderMode": "CANVAS",
++  "responsiveBehavior": "fill",
++  "rightColumn": 64,
++  "shouldScrollContents": true,
++  "topRow": 0,
++  "type": "MODAL_WIDGET",
++  "version": 2,
++  "widgetId": "87be9ka2a0",
++  "widgetName": "mdl_ruleLookup",
++  "width": 960
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/mdl_ruleLookup/tbl_ruleLookup.json b/pages/Page1/widgets/mdl_ruleLookup/tbl_ruleLookup.json
+new file mode 100644
+index 0000000..39dcc6a
+--- /dev/null
++++ b/pages/Page1/widgets/mdl_ruleLookup/tbl_ruleLookup.json
+@@ -0,0 +1,420 @@
++{
++  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
++  "animateLoading": true,
++  "borderColor": "#E0DEDE",
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "borderWidth": "1",
++  "bottomRow": 46,
++  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
++  "cachedTableData": {},
++  "canFreezeColumn": true,
++  "childStylesheet": {
++    "button": {
++      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++      "boxShadow": "none",
++      "buttonColor": "{{appsmith.theme.colors.primaryColor}}"
++    },
++    "editActions": {
++      "discardBorderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++      "discardButtonColor": "{{appsmith.theme.colors.primaryColor}}",
++      "saveBorderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++      "saveButtonColor": "{{appsmith.theme.colors.primaryColor}}"
++    },
++    "iconButton": {
++      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++      "boxShadow": "none",
++      "buttonColor": "{{appsmith.theme.colors.primaryColor}}"
++    },
++    "menuButton": {
++      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++      "boxShadow": "none",
++      "menuColor": "{{appsmith.theme.colors.primaryColor}}"
++    }
++  },
++  "columnOrder": [
++    "TECH",
++    "RULE_ID",
++    "SQL_COMMAND",
++    "EXTERNAL_PRIORITY",
++    "ACTIVE",
++    "RULE_PERIOD",
++    "RULE_PRIORITY",
++    "RULE_EXPIRY_DATE"
++  ],
++  "columnUpdatedAt": 1791774681862,
++  "columnWidthMap": {
++    "ACTIVE": 80,
++    "EXTERNAL_PRIORITY": 130,
++    "RULE_EXPIRY_DATE": 120,
++    "RULE_ID": 160,
++    "RULE_PERIOD": 110,
++    "RULE_PRIORITY": 110,
++    "SQL_COMMAND": 260,
++    "TECH": 90
++  },
++  "customIsLoading": false,
++  "customIsLoadingValue": "",
++  "defaultPageSize": 0,
++  "defaultSelectedRowIndex": -1,
++  "defaultSelectedRowIndices": [],
++  "delimiter": ",",
++  "dynamicBindingPathList": [
++    {
++      "key": "tableData"
++    },
++    {
++      "key": "accentColor"
++    },
++    {
++      "key": "borderRadius"
++    },
++    {
++      "key": "boxShadow"
++    },
++    {
++      "key": "primaryColumns.TECH.computedValue"
++    },
++    {
++      "key": "primaryColumns.RULE_ID.computedValue"
++    },
++    {
++      "key": "primaryColumns.SQL_COMMAND.computedValue"
++    },
++    {
++      "key": "primaryColumns.EXTERNAL_PRIORITY.computedValue"
++    },
++    {
++      "key": "primaryColumns.ACTIVE.computedValue"
++    },
++    {
++      "key": "primaryColumns.RULE_PERIOD.computedValue"
++    },
++    {
++      "key": "primaryColumns.RULE_PRIORITY.computedValue"
++    },
++    {
++      "key": "primaryColumns.RULE_EXPIRY_DATE.computedValue"
++    }
++  ],
++  "dynamicPropertyPathList": [],
++  "dynamicTriggerPathList": [
++    {
++      "key": "onRowSelected"
++    }
++  ],
++  "enableClientSideSearch": true,
++  "endOfData": false,
++  "flexVerticalAlignment": "start",
++  "horizontalAlignment": "LEFT",
++  "inlineEditingSaveOption": "ROW_LEVEL",
++  "isLoading": false,
++  "isSortable": true,
++  "isVisible": true,
++  "isVisibleDownload": false,
++  "isVisibleFilters": true,
++  "isVisiblePagination": true,
++  "isVisibleSearch": true,
++  "key": "s1j4e3pqu8",
++  "label": "Data",
++  "leftColumn": 1,
++  "minWidth": 450,
++  "mobileBottomRow": 46,
++  "mobileLeftColumn": 1,
++  "mobileRightColumn": 63,
++  "mobileTopRow": 6,
++  "needsErrorInfo": false,
++  "onRowSelected": "{{MockApi.pickRule(tbl_ruleLookup.selectedRow)}}",
++  "originalBottomRow": 46,
++  "originalTopRow": 6,
++  "parentColumnSpace": 15.0,
++  "parentId": "w2ygm0162v",
++  "parentRowSpace": 10,
++  "primaryColumnId": "RULE_ID",
++  "primaryColumns": {
++    "ACTIVE": {
++      "alias": "ACTIVE",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "checkbox",
++      "computedValue": "{{(() => { const tableData = tbl_ruleLookup.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"ACTIVE\"])) : currentRow[\"ACTIVE\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "CENTER",
++      "id": "ACTIVE",
++      "index": 4,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "Active",
++      "notation": "standard",
++      "originalId": "ACTIVE",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 80
++    },
++    "EXTERNAL_PRIORITY": {
++      "alias": "EXTERNAL_PRIORITY",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "number",
++      "computedValue": "{{(() => { const tableData = tbl_ruleLookup.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"EXTERNAL_PRIORITY\"])) : currentRow[\"EXTERNAL_PRIORITY\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "EXTERNAL_PRIORITY",
++      "index": 3,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "External priority",
++      "notation": "standard",
++      "originalId": "EXTERNAL_PRIORITY",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": false,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 130
++    },
++    "RULE_EXPIRY_DATE": {
++      "alias": "RULE_EXPIRY_DATE",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "text",
++      "computedValue": "{{(() => { const tableData = tbl_ruleLookup.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"RULE_EXPIRY_DATE\"])) : currentRow[\"RULE_EXPIRY_DATE\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "RULE_EXPIRY_DATE",
++      "index": 7,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "Expiry date",
++      "notation": "standard",
++      "originalId": "RULE_EXPIRY_DATE",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 120
++    },
++    "RULE_ID": {
++      "alias": "RULE_ID",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "text",
++      "computedValue": "{{(() => { const tableData = tbl_ruleLookup.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"RULE_ID\"])) : currentRow[\"RULE_ID\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "RULE_ID",
++      "index": 1,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "Rule ID",
++      "notation": "standard",
++      "originalId": "RULE_ID",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 160
++    },
++    "RULE_PERIOD": {
++      "alias": "RULE_PERIOD",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "number",
++      "computedValue": "{{(() => { const tableData = tbl_ruleLookup.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"RULE_PERIOD\"])) : currentRow[\"RULE_PERIOD\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "RULE_PERIOD",
++      "index": 5,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "Period (min)",
++      "notation": "standard",
++      "originalId": "RULE_PERIOD",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": false,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 110
++    },
++    "RULE_PRIORITY": {
++      "alias": "RULE_PRIORITY",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "number",
++      "computedValue": "{{(() => { const tableData = tbl_ruleLookup.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"RULE_PRIORITY\"])) : currentRow[\"RULE_PRIORITY\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "RULE_PRIORITY",
++      "index": 6,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "Rule priority",
++      "notation": "standard",
++      "originalId": "RULE_PRIORITY",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": false,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 110
++    },
++    "SQL_COMMAND": {
++      "alias": "SQL_COMMAND",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "text",
++      "computedValue": "{{(() => { const tableData = tbl_ruleLookup.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"SQL_COMMAND\"])) : currentRow[\"SQL_COMMAND\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "SQL_COMMAND",
++      "index": 2,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "SQL command",
++      "notation": "standard",
++      "originalId": "SQL_COMMAND",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 260
++    },
++    "TECH": {
++      "alias": "TECH",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "text",
++      "computedValue": "{{(() => { const tableData = tbl_ruleLookup.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"TECH\"])) : currentRow[\"TECH\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "TECH",
++      "index": 0,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "Tech",
++      "notation": "standard",
++      "originalId": "TECH",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 90
++    }
++  },
++  "renderMode": "CANVAS",
++  "responsiveBehavior": "fill",
++  "rightColumn": 63,
++  "searchKey": "",
++  "tableData": "{{MockApi.rules}}",
++  "textSize": "0.875rem",
++  "topRow": 6,
++  "totalRecordsCount": 0,
++  "type": "TABLE_WIDGET_V2",
++  "version": 2,
++  "verticalAlignment": "CENTER",
++  "widgetId": "839tbmxupd",
++  "widgetName": "tbl_ruleLookup"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/mdl_ruleLookup/txt_lookupTitle.json b/pages/Page1/widgets/mdl_ruleLookup/txt_lookupTitle.json
+new file mode 100644
+index 0000000..1cda06d
+--- /dev/null
++++ b/pages/Page1/widgets/mdl_ruleLookup/txt_lookupTitle.json
+@@ -0,0 +1,52 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 5,
++  "dynamicBindingPathList": [
++    {
++      "key": "truncateButtonColor"
++    },
++    {
++      "key": "fontFamily"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "AUTO_HEIGHT",
++  "dynamicTriggerPathList": [],
++  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
++  "fontSize": "1.25rem",
++  "fontStyle": "BOLD",
++  "isLoading": false,
++  "isVisible": true,
++  "key": "vj927poar2",
++  "leftColumn": 1,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 4,
++  "minWidth": 450,
++  "mobileBottomRow": 5,
++  "mobileLeftColumn": 1,
++  "mobileRightColumn": 50,
++  "mobileTopRow": 1,
++  "needsErrorInfo": false,
++  "originalBottomRow": 5,
++  "originalTopRow": 1,
++  "overflow": "NONE",
++  "parentColumnSpace": 15.0,
++  "parentId": "w2ygm0162v",
++  "parentRowSpace": 10,
++  "renderMode": "CANVAS",
++  "responsiveBehavior": "fill",
++  "rightColumn": 50,
++  "shouldTruncate": false,
++  "text": "Select a rule (click a row)",
++  "textAlign": "LEFT",
++  "textColor": "#231F20",
++  "topRow": 1,
++  "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "type": "TEXT_WIDGET",
++  "version": 1,
++  "widgetId": "ngygssphri",
++  "widgetName": "txt_lookupTitle"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/mdl_testRule/btn_testClose.json b/pages/Page1/widgets/mdl_testRule/btn_testClose.json
+new file mode 100644
+index 0000000..6499436
+--- /dev/null
++++ b/pages/Page1/widgets/mdl_testRule/btn_testClose.json
+@@ -0,0 +1,50 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 50,
++  "boxShadow": "none",
++  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "buttonVariant": "SECONDARY",
++  "disabledWhenInvalid": false,
++  "dynamicBindingPathList": [
++    {
++      "key": "buttonColor"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicTriggerPathList": [
++    {
++      "key": "onClick"
++    }
++  ],
++  "isDefaultClickDisabled": true,
++  "isDisabled": false,
++  "isLoading": false,
++  "isVisible": true,
++  "key": "o084iwwlnc",
++  "leftColumn": 52,
++  "minWidth": 120,
++  "mobileBottomRow": 50,
++  "mobileLeftColumn": 52,
++  "mobileRightColumn": 63,
++  "mobileTopRow": 46,
++  "needsErrorInfo": false,
++  "onClick": "{{closeModal('mdl_testRule')}}",
++  "parentColumnSpace": 11.875,
++  "parentId": "i0o6lrefk1",
++  "parentRowSpace": 10,
++  "placement": "CENTER",
++  "recaptchaType": "V3",
++  "renderMode": "CANVAS",
++  "resetFormOnClick": false,
++  "responsiveBehavior": "hug",
++  "rightColumn": 63,
++  "text": "Close",
++  "topRow": 46,
++  "type": "BUTTON_WIDGET",
++  "version": 1,
++  "widgetId": "x44vmnpuoi",
++  "widgetName": "btn_testClose"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/mdl_testRule/mdl_testRule.json b/pages/Page1/widgets/mdl_testRule/mdl_testRule.json
+new file mode 100644
+index 0000000..c5700e7
+--- /dev/null
++++ b/pages/Page1/widgets/mdl_testRule/mdl_testRule.json
+@@ -0,0 +1,77 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 500,
++  "boxShadow": "none",
++  "canEscapeKeyClose": true,
++  "canOutsideClickClose": false,
++  "children": [
++    {
++      "bottomRow": 500,
++      "canExtend": true,
++      "containerStyle": "none",
++      "detachFromLayout": true,
++      "dynamicBindingPathList": [],
++      "dynamicTriggerPathList": [],
++      "flexLayers": [],
++      "isDisabled": false,
++      "isLoading": false,
++      "isVisible": true,
++      "key": "u7r9d5advp",
++      "leftColumn": 0,
++      "minHeight": 500,
++      "minWidth": 450,
++      "mobileBottomRow": 500,
++      "mobileLeftColumn": 0,
++      "mobileRightColumn": 760,
++      "mobileTopRow": 0,
++      "needsErrorInfo": false,
++      "parentColumnSpace": 1,
++      "parentId": "3wkgs5sqil",
++      "parentRowSpace": 1,
++      "renderMode": "CANVAS",
++      "responsiveBehavior": "fill",
++      "rightColumn": 760,
++      "shouldScrollContents": false,
++      "topRow": 0,
++      "type": "CANVAS_WIDGET",
++      "version": 1,
++      "widgetId": "i0o6lrefk1",
++      "widgetName": "cnv_mdl_testRule"
++    }
++  ],
++  "detachFromLayout": true,
++  "dynamicBindingPathList": [
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "AUTO_HEIGHT",
++  "dynamicTriggerPathList": [],
++  "height": 500,
++  "isCanvas": true,
++  "isLoading": false,
++  "key": "28q0xwu7hh",
++  "leftColumn": 0,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 24,
++  "minWidth": 450,
++  "mobileBottomRow": 500,
++  "mobileLeftColumn": 0,
++  "mobileRightColumn": 64,
++  "mobileTopRow": 0,
++  "needsErrorInfo": false,
++  "parentColumnSpace": 1,
++  "parentId": "0",
++  "parentRowSpace": 10,
++  "renderMode": "CANVAS",
++  "responsiveBehavior": "fill",
++  "rightColumn": 64,
++  "shouldScrollContents": true,
++  "topRow": 0,
++  "type": "MODAL_WIDGET",
++  "version": 2,
++  "widgetId": "3wkgs5sqil",
++  "widgetName": "mdl_testRule",
++  "width": 760
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/mdl_testRule/tbl_testRule.json b/pages/Page1/widgets/mdl_testRule/tbl_testRule.json
+new file mode 100644
+index 0000000..657e274
+--- /dev/null
++++ b/pages/Page1/widgets/mdl_testRule/tbl_testRule.json
+@@ -0,0 +1,259 @@
++{
++  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
++  "animateLoading": true,
++  "borderColor": "#E0DEDE",
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "borderWidth": "1",
++  "bottomRow": 44,
++  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
++  "cachedTableData": {},
++  "canFreezeColumn": true,
++  "childStylesheet": {
++    "button": {
++      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++      "boxShadow": "none",
++      "buttonColor": "{{appsmith.theme.colors.primaryColor}}"
++    },
++    "editActions": {
++      "discardBorderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++      "discardButtonColor": "{{appsmith.theme.colors.primaryColor}}",
++      "saveBorderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++      "saveButtonColor": "{{appsmith.theme.colors.primaryColor}}"
++    },
++    "iconButton": {
++      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++      "boxShadow": "none",
++      "buttonColor": "{{appsmith.theme.colors.primaryColor}}"
++    },
++    "menuButton": {
++      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++      "boxShadow": "none",
++      "menuColor": "{{appsmith.theme.colors.primaryColor}}"
++    }
++  },
++  "columnOrder": [
++    "LOT_ID",
++    "TECH",
++    "OPERATION",
++    "EXTERNAL_PRIORITY"
++  ],
++  "columnUpdatedAt": 1791774681862,
++  "columnWidthMap": {
++    "EXTERNAL_PRIORITY": 140,
++    "LOT_ID": 150,
++    "OPERATION": 150,
++    "TECH": 100
++  },
++  "customIsLoading": false,
++  "customIsLoadingValue": "",
++  "defaultPageSize": 0,
++  "defaultSelectedRowIndex": -1,
++  "defaultSelectedRowIndices": [],
++  "delimiter": ",",
++  "dynamicBindingPathList": [
++    {
++      "key": "tableData"
++    },
++    {
++      "key": "accentColor"
++    },
++    {
++      "key": "borderRadius"
++    },
++    {
++      "key": "boxShadow"
++    },
++    {
++      "key": "primaryColumns.LOT_ID.computedValue"
++    },
++    {
++      "key": "primaryColumns.TECH.computedValue"
++    },
++    {
++      "key": "primaryColumns.OPERATION.computedValue"
++    },
++    {
++      "key": "primaryColumns.EXTERNAL_PRIORITY.computedValue"
++    }
++  ],
++  "dynamicPropertyPathList": [],
++  "dynamicTriggerPathList": [],
++  "enableClientSideSearch": true,
++  "endOfData": false,
++  "flexVerticalAlignment": "start",
++  "horizontalAlignment": "LEFT",
++  "inlineEditingSaveOption": "ROW_LEVEL",
++  "isLoading": false,
++  "isSortable": true,
++  "isVisible": true,
++  "isVisibleDownload": true,
++  "isVisibleFilters": true,
++  "isVisiblePagination": true,
++  "isVisibleSearch": true,
++  "key": "oiw38ndpsr",
++  "label": "Data",
++  "leftColumn": 1,
++  "minWidth": 450,
++  "mobileBottomRow": 44,
++  "mobileLeftColumn": 1,
++  "mobileRightColumn": 63,
++  "mobileTopRow": 6,
++  "needsErrorInfo": false,
++  "originalBottomRow": 44,
++  "originalTopRow": 6,
++  "parentColumnSpace": 11.875,
++  "parentId": "i0o6lrefk1",
++  "parentRowSpace": 10,
++  "primaryColumnId": "LOT_ID",
++  "primaryColumns": {
++    "EXTERNAL_PRIORITY": {
++      "alias": "EXTERNAL_PRIORITY",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "number",
++      "computedValue": "{{(() => { const tableData = tbl_testRule.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"EXTERNAL_PRIORITY\"])) : currentRow[\"EXTERNAL_PRIORITY\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "EXTERNAL_PRIORITY",
++      "index": 3,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "External priority",
++      "notation": "standard",
++      "originalId": "EXTERNAL_PRIORITY",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": false,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 140
++    },
++    "LOT_ID": {
++      "alias": "LOT_ID",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "text",
++      "computedValue": "{{(() => { const tableData = tbl_testRule.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"LOT_ID\"])) : currentRow[\"LOT_ID\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "LOT_ID",
++      "index": 0,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "Lot ID",
++      "notation": "standard",
++      "originalId": "LOT_ID",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 150
++    },
++    "OPERATION": {
++      "alias": "OPERATION",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "text",
++      "computedValue": "{{(() => { const tableData = tbl_testRule.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"OPERATION\"])) : currentRow[\"OPERATION\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "OPERATION",
++      "index": 2,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "Operation",
++      "notation": "standard",
++      "originalId": "OPERATION",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 150
++    },
++    "TECH": {
++      "alias": "TECH",
++      "allowCellWrapping": false,
++      "allowHeaderWrapping": false,
++      "allowSameOptionsInNewRow": true,
++      "columnType": "text",
++      "computedValue": "{{(() => { const tableData = tbl_testRule.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"TECH\"])) : currentRow[\"TECH\"] })()}}",
++      "currencyCode": "USD",
++      "decimals": 0,
++      "enableFilter": true,
++      "enableSort": true,
++      "fontStyle": "",
++      "horizontalAlignment": "LEFT",
++      "id": "TECH",
++      "index": 1,
++      "isCellEditable": false,
++      "isCellVisible": true,
++      "isDerived": false,
++      "isDisabled": false,
++      "isDiscardVisible": true,
++      "isEditable": false,
++      "isSaveVisible": true,
++      "isVisible": true,
++      "label": "Tech",
++      "notation": "standard",
++      "originalId": "TECH",
++      "sticky": "",
++      "textColor": "#231F20",
++      "textSize": "0.875rem",
++      "thousandSeparator": true,
++      "validation": {},
++      "verticalAlignment": "CENTER",
++      "width": 100
++    }
++  },
++  "renderMode": "CANVAS",
++  "responsiveBehavior": "fill",
++  "rightColumn": 63,
++  "searchKey": "",
++  "tableData": "{{MockApi.testResult.ROWS}}",
++  "textSize": "0.875rem",
++  "topRow": 6,
++  "totalRecordsCount": 0,
++  "type": "TABLE_WIDGET_V2",
++  "version": 2,
++  "verticalAlignment": "CENTER",
++  "widgetId": "rh7p7v07v3",
++  "widgetName": "tbl_testRule"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/mdl_testRule/txt_testCount.json b/pages/Page1/widgets/mdl_testRule/txt_testCount.json
+new file mode 100644
+index 0000000..b831430
+--- /dev/null
++++ b/pages/Page1/widgets/mdl_testRule/txt_testCount.json
+@@ -0,0 +1,55 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 5,
++  "dynamicBindingPathList": [
++    {
++      "key": "text"
++    },
++    {
++      "key": "truncateButtonColor"
++    },
++    {
++      "key": "fontFamily"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "AUTO_HEIGHT",
++  "dynamicTriggerPathList": [],
++  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
++  "fontSize": "1.25rem",
++  "fontStyle": "BOLD",
++  "isLoading": false,
++  "isVisible": true,
++  "key": "aqz8qqkg20",
++  "leftColumn": 1,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 4,
++  "minWidth": 450,
++  "mobileBottomRow": 5,
++  "mobileLeftColumn": 1,
++  "mobileRightColumn": 63,
++  "mobileTopRow": 1,
++  "needsErrorInfo": false,
++  "originalBottomRow": 5,
++  "originalTopRow": 1,
++  "overflow": "NONE",
++  "parentColumnSpace": 11.875,
++  "parentId": "i0o6lrefk1",
++  "parentRowSpace": 10,
++  "renderMode": "CANVAS",
++  "responsiveBehavior": "fill",
++  "rightColumn": 63,
++  "shouldTruncate": false,
++  "text": "{{MockApi.testResult.ROW_COUNT + ' lot(s) matched' + (MockApi.testResult.TRUNCATED ? ' (first ' + MockApi.TEST_RULE_ROW_LIMIT + ' shown)' : '')}}",
++  "textAlign": "LEFT",
++  "textColor": "#231F20",
++  "topRow": 1,
++  "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "type": "TEXT_WIDGET",
++  "version": 1,
++  "widgetId": "7151ilj50s",
++  "widgetName": "txt_testCount"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/txt_mockRole.json b/pages/Page1/widgets/txt_mockRole.json
+new file mode 100644
+index 0000000..ce32899
+--- /dev/null
++++ b/pages/Page1/widgets/txt_mockRole.json
+@@ -0,0 +1,55 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 6,
++  "dynamicBindingPathList": [
++    {
++      "key": "text"
++    },
++    {
++      "key": "truncateButtonColor"
++    },
++    {
++      "key": "fontFamily"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "AUTO_HEIGHT",
++  "dynamicTriggerPathList": [],
++  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
++  "fontSize": "0.75rem",
++  "fontStyle": "",
++  "isLoading": false,
++  "isVisible": true,
++  "key": "fz39vescas",
++  "leftColumn": 40,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 4,
++  "minWidth": 450,
++  "mobileBottomRow": 6,
++  "mobileLeftColumn": 40,
++  "mobileRightColumn": 64,
++  "mobileTopRow": 2,
++  "needsErrorInfo": false,
++  "originalBottomRow": 6,
++  "originalTopRow": 2,
++  "overflow": "NONE",
++  "parentColumnSpace": 19.9375,
++  "parentId": "0",
++  "parentRowSpace": 10,
++  "renderMode": "CANVAS",
++  "responsiveBehavior": "fill",
++  "rightColumn": 64,
++  "shouldTruncate": false,
++  "text": "{{MockApi.MOCK_ROLE ? 'Mock API - role: ' + MockApi.MOCK_ROLE : ''}}",
++  "textAlign": "RIGHT",
++  "textColor": "#6B7280",
++  "topRow": 2,
++  "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "type": "TEXT_WIDGET",
++  "version": 1,
++  "widgetId": "h8ifvr2esg",
++  "widgetName": "txt_mockRole"
++}
+\ No newline at end of file
+diff --git a/pages/Page1/widgets/txt_title.json b/pages/Page1/widgets/txt_title.json
+new file mode 100644
+index 0000000..29576ef
+--- /dev/null
++++ b/pages/Page1/widgets/txt_title.json
+@@ -0,0 +1,52 @@
++{
++  "animateLoading": true,
++  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
++  "bottomRow": 6,
++  "dynamicBindingPathList": [
++    {
++      "key": "truncateButtonColor"
++    },
++    {
++      "key": "fontFamily"
++    },
++    {
++      "key": "borderRadius"
++    }
++  ],
++  "dynamicHeight": "AUTO_HEIGHT",
++  "dynamicTriggerPathList": [],
++  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
++  "fontSize": "1.5rem",
++  "fontStyle": "BOLD",
++  "isLoading": false,
++  "isVisible": true,
++  "key": "dko99oe8u1",
++  "leftColumn": 0,
++  "maxDynamicHeight": 9000,
++  "minDynamicHeight": 4,
++  "minWidth": 450,
++  "mobileBottomRow": 6,
++  "mobileLeftColumn": 0,
++  "mobileRightColumn": 40,
++  "mobileTopRow": 1,
++  "needsErrorInfo": false,
++  "originalBottomRow": 6,
++  "originalTopRow": 1,
++  "overflow": "NONE",
++  "parentColumnSpace": 19.9375,
++  "parentId": "0",
++  "parentRowSpace": 10,
++  "renderMode": "CANVAS",
++  "responsiveBehavior": "fill",
++  "rightColumn": 40,
++  "shouldTruncate": false,
++  "text": "VSMC Lot Auto Priority",
++  "textAlign": "LEFT",
++  "textColor": "#231F20",
++  "topRow": 1,
++  "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
++  "type": "TEXT_WIDGET",
++  "version": 1,
++  "widgetId": "0adac97eoz",
++  "widgetName": "txt_title"
++}
+\ No newline at end of file
+-- 
+2.43.0
+
